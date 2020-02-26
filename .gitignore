@@ -1,3 +1,4 @@
+/release/
 .uuid
 .vs/
 /*.scad
@@ -8,7 +9,12 @@
 *.new
 out.*
 Makefile
+Makefile.Debug
+Makefile.Release
 objects
+/object_script.openscad
+/object_script.openscad.Debug
+/object_script.openscad.Release
 .gdbinit
 .qmake.stash
 .tags*
