@@ -1,3 +1,5 @@
+#define	USE_TABS	0
+
 /*
  *  OpenSCAD (www.openscad.org)
  *  Copyright (C) 2009-2011 Clifford Wolf <clifford@clifford.at> and
@@ -1343,7 +1345,11 @@ void MainWindow::actionOpen()
 		if (!fileInfoList[i].exists()) {
 			return;
 		}
-		tabManager->open(fileInfoList[i].filePath());
+		if (USE_TABS) {
+			tabManager->open(fileInfoList[i].filePath());
+		} else {
+			new MainWindow(QStringList(fileInfoList[i].filePath()));
+		}
 	}
 }
 
