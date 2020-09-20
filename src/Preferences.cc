@@ -161,6 +161,7 @@ void Preferences::init() {
 #endif
 	this->defaultmap["advanced/openCSGLimit"] = RenderSettings::inst()->openCSGTermLimit;
 	this->defaultmap["advanced/forceGoldfeather"] = false;
+	this->defaultmap["advanced/useTabs"] = true;
 	this->defaultmap["advanced/undockableWindows"] = false;
 	this->defaultmap["advanced/reorderWindows"] = true;
 	this->defaultmap["launcher/showOnStartup"] = true;
@@ -459,6 +460,14 @@ Preferences::on_undockCheckBox_toggled(bool state)
 	QSettingsCached settings;
 	settings.setValue("advanced/undockableWindows", state);
 	emit updateUndockMode(state);
+}
+
+void
+Preferences::on_useTabs_toggled(bool state)
+{
+	QSettingsCached settings;
+	settings.setValue("advanced/useTabs",state);
+	MainWindow::updateUseTabs(state);
 }
 
 void
@@ -949,6 +958,7 @@ void Preferences::updateGUI()
 	BlockSignals<QCheckBox *>(this->localizationCheckBox)->setChecked(getValue("advanced/localization").toBool());
 	BlockSignals<QCheckBox *>(this->autoReloadRaiseCheckBox)->setChecked(getValue("advanced/autoReloadRaise").toBool());
 	BlockSignals<QCheckBox *>(this->forceGoldfeatherBox)->setChecked(getValue("advanced/forceGoldfeather").toBool());
+	BlockSignals<QCheckBox *>(this->useTabs)->setChecked(getValue("advanced/useTabs").toBool());
 	BlockSignals<QCheckBox *>(this->reorderCheckBox)->setChecked(getValue("advanced/reorderWindows").toBool());
 	BlockSignals<QCheckBox *>(this->undockCheckBox)->setChecked(getValue("advanced/undockableWindows").toBool());
 	BlockSignals<QCheckBox *>(this->launcherBox)->setChecked(getValue("launcher/showOnStartup").toBool());
@@ -985,6 +995,8 @@ void Preferences::updateGUI()
 	this->labelCharacterThreshold->setEnabled(getValue("editor/enableAutocomplete").toBool());
 	this->lineEditCharacterThreshold->setEnabled(getValue("editor/enableAutocomplete").toBool());
 	this->lineEditStepSize->setEnabled(getValue("editor/stepSize").toBool());
+
+	MainWindow::updateUseTabs(getValue("advanced/useTabs").toBool());
 
 	updateComboBox(this->comboBoxLineWrap, Settings::Settings::lineWrap);
 	updateComboBox(this->comboBoxLineWrapIndentationStyle, Settings::Settings::lineWrapIndentationStyle);

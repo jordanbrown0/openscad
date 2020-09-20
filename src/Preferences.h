@@ -43,6 +43,7 @@ public slots:
 	void on_autoReloadRaiseCheckBox_toggled(bool);
 	void on_updateCheckBox_toggled(bool);
 	void on_snapshotCheckBox_toggled(bool);
+	void on_useTabs_toggled(bool);
 	void on_reorderCheckBox_toggled(bool);
 	void on_undockCheckBox_toggled(bool);
 	void on_checkNowButton_clicked();

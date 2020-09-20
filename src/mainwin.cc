@@ -1,4 +1,3 @@
-#define	USE_TABS	0
 
 /*
  *  OpenSCAD (www.openscad.org)
@@ -333,7 +332,7 @@ MainWindow::MainWindow(const QStringList &filenames)
 
 	// File menu
 	connect(this->fileActionNewWindow, SIGNAL(triggered()), this, SLOT(actionNewWindow()));
-	connect(this->fileActionNew, SIGNAL(triggered()), tabManager, SLOT(actionNew()));
+	connect(this->fileActionNew, SIGNAL(triggered()), this, SLOT(actionNew()));
 	connect(this->fileActionOpenWindow, SIGNAL(triggered()), this, SLOT(actionOpenWindow()));
 	connect(this->fileActionOpen, SIGNAL(triggered()), this, SLOT(actionOpen()));
 	connect(this->fileActionSave, SIGNAL(triggered()), this, SLOT(actionSave()));
@@ -1345,17 +1344,22 @@ void MainWindow::actionOpen()
 		if (!fileInfoList[i].exists()) {
 			return;
 		}
-		if (USE_TABS) {
-			tabManager->open(fileInfoList[i].filePath());
-		} else {
-			new MainWindow(QStringList(fileInfoList[i].filePath()));
-		}
+		open(fileInfoList[i].filePath());
 	}
 }
 
 void MainWindow::actionNewWindow()
 {
 	new MainWindow(QStringList());
+}
+
+void MainWindow::actionNew()
+{
+	if (Preferences::inst()->getValue("advanced/useTabs").toBool()) {
+		tabManager->actionNew();
+	} else {
+		new MainWindow(QStringList());
+	}
 }
 
 void MainWindow::actionOpenWindow()
@@ -1373,7 +1377,31 @@ void MainWindow::actionOpenWindow()
 void MainWindow::actionOpenRecent()
 {
 	auto action = qobject_cast<QAction *>(sender());
-	tabManager->open(action->data().toString());
+	open(action->data().toString());
+}
+
+void MainWindow::open(const QString &filename)
+{
+	if (Preferences::inst()->getValue("advanced/useTabs").toBool()) {
+		tabManager->open(filename);
+	} else {
+		if(activeEditor->filepath.isEmpty() && !activeEditor->isContentModified()) {
+			tabManager->openTabFile(filename);
+		} else {
+			new MainWindow(QStringList(filename));
+		}
+	}
+}
+
+void MainWindow::updateUseTabs(bool state)
+{
+	for (auto &widget : QApplication::topLevelWidgets()) {
+		auto mainWin = qobject_cast<MainWindow *>(widget);
+		if (mainWin) {
+			mainWin->fileActionNewWindow->setVisible(state);
+			mainWin->fileActionOpenWindow->setVisible(state);
+		}
+	}
 }
 
 void MainWindow::clearRecentFiles()
@@ -1427,7 +1455,7 @@ void MainWindow::actionOpenExample()
 	const auto action = qobject_cast<QAction *>(sender());
 	if (action) {
 		const auto &path = action->data().toString();
-		tabManager->open(path);
+		open(path);
 	}
 }
 

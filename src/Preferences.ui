@@ -1804,6 +1804,13 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <item>
+                <widget class="QCheckBox" name="useTabs">
+                 <property name="text">
+                  <string>Use tabs</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QCheckBox" name="reorderCheckBox">
                  <property name="text">
                   <string>Enable docking of Editor and Console in different places</string>

@@ -135,6 +135,7 @@ private:
 	void addKeyboardShortCut(const QList<QAction *> &actions);
 	void updateStatusBar(class ProgressWidget *progressWidget);
 	void activateWindow(int);
+	void open(const QString &filename);
 
   class LibraryInfoDialog* library_info_dialog;
   class FontListDialog *font_list_dialog;
@@ -146,6 +147,7 @@ public slots:
 
 private slots:
 	void actionOpen();
+	void actionNew();
 	void actionNewWindow();
 	void actionOpenWindow();
 	void actionOpenRecent();
