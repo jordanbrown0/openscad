@@ -33,6 +33,9 @@
 #include "exceptions.h"
 #include "memory.h"
 #include "UserModule.h"
+#include "FreetypeRenderer.h"
+#include "FontCache.h"
+#include "calc.h"
 #include "degree_trig.h"
 
 #include <cmath>
@@ -41,6 +44,8 @@
 #include <limits>
 #include <algorithm>
 #include <random>
+#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include"boost-utils.h"
 /*Unicode support for string lengths and array accesses*/
@@ -914,6 +919,211 @@ Value builtin_cross(const std::shared_ptr<Context> ctx, const std::shared_ptr<Ev
 	return VectorType(x,y,z);
 }
 
+
+#if	0
+template <>
+struct fmt::formatter<ValuePtr> {
+	std::string f = "{:";
+	char presentation = 0;
+	auto parse(format_parse_context& ctx) {
+	    auto it = ctx.begin(), end = ctx.end();
+	    for (; it != end && *it != '}'; it++) {
+		    f += (char) *it;
+		    presentation = *it;
+	    }
+	    f = f + "}";
+	    // Return an iterator past the end of the parsed range:
+	    return it;
+	}
+	template <typename FormatContext>
+	auto format(const ValuePtr v, FormatContext& ctx) {
+		switch (v->type()) {
+		case Value::Type::NUMBER:
+		LOG(message_group::Warning,Location::NONE,"","format=%1$s", f);
+			if (presentation != 0 && strchr("bBdoxX", presentation) != NULL) {
+				return format_to(ctx.out(), f, (int64_t)floor(v->toDouble()+0.5));
+			} else {
+				return format_to(ctx.out(), f, v->toDouble());
+			}
+		case Value::Type::BOOL:
+			return format_to(ctx.out(), f, v->toBool());
+		case Value::Type::STRING:
+		default:
+			return format_to(ctx.out(), f, v->toString());
+		}
+	}
+};
+#endif
+
+// This sort of works.
+// What doesn't work is dynamic width and precision, because it
+// decides that ValuePtr is not an integer.
+// Some of the cases should perhaps yield errors, but don't; we
+// just go ahead and try to convert.  Part of the problem there is
+// that I don't know how to report an error from the format()
+// function.
+// 'L' is used for both integer and floating point, so we don't know
+// which is intended.  Using it for double seems more general.
+// 
+template <>
+struct fmt::formatter<ValuePtr, char> {
+	FMT_CONSTEXPR formatter() = default;
+	// Parses format specifiers stopping either at the end of the range
+	// or at the terminating '}'.
+	template <typename ParseContext>
+	FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
+		using handler_type =
+		    detail::dynamic_specs_handler<ParseContext>;
+		auto type = detail::type_constant<ValuePtr, char>::value;
+		detail::specs_checker<handler_type>
+		    handler(handler_type(specs_, ctx), type);
+		auto it = parse_format_specs(ctx.begin(), ctx.end(), handler);
+		return it;
+	}
+
+	template <typename FormatContext>
+	auto format(const ValuePtr& val, FormatContext& ctx)
+	    -> decltype(ctx.out()) {
+		detail::handle_dynamic_spec<detail::width_checker>(
+		    specs_.width, specs_.width_ref, ctx);
+		detail::handle_dynamic_spec<detail::precision_checker>(
+		    specs_.precision, specs_.precision_ref, ctx);
+		using af =
+		    detail::arg_formatter<typename FormatContext::iterator,
+			typename FormatContext::char_type>;
+		basic_format_arg<FormatContext> arg;
+		switch (specs_.type) {
+		    case 'd':
+		    case 'x':
+		    case 'X':
+		    case 'b':
+		    case 'B':
+		    case 'c':
+		    case 'o':
+			arg = detail::make_arg<FormatContext>(
+			    (int64_t)floor(val->toDouble()+0.5));
+			break;
+		    case 'G':
+		    case 'g':
+		    case 'E':
+		    case 'e':
+		    case 'F':
+		    case 'f':
+		    case 'A':
+		    case 'a':
+		    case 'L':
+			arg = detail::make_arg<FormatContext>(val->toDouble());
+			break;
+		    case 's':
+			arg = detail::make_arg<FormatContext>(val->toString());
+			break;
+		    default:
+		    case 0:
+			switch(val->type()) {
+			case Value::Type::NUMBER:
+			    arg = detail::make_arg<FormatContext>(val->toDouble());
+			    break;
+			default:	// Maybe an error?
+			case Value::Type::STRING:
+			    arg = detail::make_arg<FormatContext>(val->toString());
+			    break;
+			case Value::Type::BOOL:
+			    arg = detail::make_arg<FormatContext>(val->toBool());
+			    break;
+			}
+			break;
+		}
+		return visit_format_arg(af(ctx, nullptr, &specs_), arg);
+	}
+
+	private:
+		detail::dynamic_format_specs<char> specs_;
+};
+
+// Sort of works.  integer and float formats work for NUMBER.
+// Parameterized width and precision don't work because we don't have a way to give them to the
+// inner format.
+ValuePtr builtin_format2(const std::shared_ptr<Context> ctx, const std::shared_ptr<EvalContext> evalctx)
+{
+	if (evalctx->numArgs() < 1) {
+		print_argCnt_warning("format2", ctx, evalctx);
+		return ValuePtr::undefined;
+	}
+
+	// Could just skip the type check, and just toString() it.
+	// That would work, but it's a bit hard to see the
+	// use case and it seems more likely to be a bug in
+	// the caller.
+	ValuePtr vfmt = evalctx->getArgValue(0);
+	if (vfmt->type() != Value::Type::STRING) {
+		print_argConvert_warning("format2", ctx, evalctx);
+		return ValuePtr::undefined;
+	}
+	std::string fmt = vfmt->toString();
+
+	fmt::dynamic_format_arg_store<fmt::format_context> store;
+	for (size_t i = 1; i < evalctx->numArgs(); ++i) {
+		ValuePtr v = evalctx->getArgValue(i);
+		store.push_back(v);
+	}
+
+	try {
+		return ValuePtr(fmt::vformat(fmt, store));
+	} catch (const fmt::format_error &e) {
+		LOG(message_group::Warning,evalctx->loc,ctx->documentPath(),"format2(): %1$s", e.what());
+		return ValuePtr::undefined;
+	}
+
+}
+
+// This version sort of works, but you have to use "f" for NUMBER.
+// Also parameterized width/precision doesn't work because its argument is a double and wants to be an integer.
+ValuePtr builtin_format(const std::shared_ptr<Context> ctx, const std::shared_ptr<EvalContext> evalctx)
+{
+	if (evalctx->numArgs() < 1) {
+		print_argCnt_warning("format", ctx, evalctx);
+		return ValuePtr::undefined;
+	}
+
+	// Could just skip the type check, and just toString() it.
+	// That would work, but it's a bit hard to see the
+	// use case and it seems more likely to be a bug in
+	// the caller.
+	ValuePtr vfmt = evalctx->getArgValue(0);
+	if (vfmt->type() != Value::Type::STRING) {
+		print_argConvert_warning("format", ctx, evalctx);
+		return ValuePtr::undefined;
+	}
+	std::string fmt = vfmt->toString();
+
+	fmt::dynamic_format_arg_store<fmt::format_context> store;
+	for (size_t i = 1; i < evalctx->numArgs(); ++i) {
+		ValuePtr v = evalctx->getArgValue(i);
+		switch (v->type()) {
+		case Value::Type::STRING:
+			store.push_back(v->toString());
+			break;
+		case Value::Type::NUMBER:
+			store.push_back(v->toDouble());
+			break;
+		case Value::Type::BOOL:
+			store.push_back(v->toBool());
+			break;
+		default:
+			print_argConvert_warning("format", ctx, evalctx);
+			return ValuePtr::undefined;
+		}
+	}
+
+	try {
+		return ValuePtr(fmt::vformat(fmt, store));
+	} catch (const fmt::format_error &e) {
+		LOG(message_group::Warning,evalctx->loc,ctx->documentPath(),"format(): %1$s", e.what());
+		return ValuePtr::undefined;
+	}
+
+}
+
 Value builtin_is_undef(const std::shared_ptr<Context> ctx, const std::shared_ptr<EvalContext> evalctx)
 {
 	if (evalctx->numArgs() == 1) {
@@ -1146,6 +1356,28 @@ void register_builtin_functions()
 	Builtins::init("parent_module", new BuiltinFunction(&builtin_parent_module),
 				{
 					"parent_module(number) -> string",
+				});
+
+	Builtins::init("textmetrics", new BuiltinFunction(&builtin_textmetrics),
+				{
+					"textmetrics(t, size, font,"
+					" halign, valign, spacing,"
+					" direction, language, script)"
+					" -> [ NEEDSWORK ]",
+				});
+	Builtins::init("fontmetrics", new BuiltinFunction(&builtin_fontmetrics),
+				{
+					"textmetrics(font, size)"
+					" -> [ NEEDSWORK ]",
+				});
+	Builtins::init("format2", new BuiltinFunction(&builtin_format2),
+				{
+					"format2(string, ...) -> string",
+				});
+
+	Builtins::init("format", new BuiltinFunction(&builtin_format),
+				{
+					"format(string, ...) -> string",
 				});
 
 	Builtins::init("is_undef", new BuiltinFunction(&builtin_is_undef),
