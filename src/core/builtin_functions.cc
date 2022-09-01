@@ -1099,7 +1099,9 @@ void register_builtin_functions()
     "concat(number or string or vector, ...) -> vector",
   });
 
-  Builtins::init("object", new BuiltinFunction(&builtin_object),
+  Builtins::init("object",
+                 new BuiltinFunction(&builtin_object,
+                                     &Feature::ExperimentalObjectFunction),
   {
     "object(key=value, ...) -> object",
   });
