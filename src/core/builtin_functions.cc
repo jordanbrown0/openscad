@@ -431,10 +431,16 @@ Value builtin_object(Arguments arguments, const Location& loc)
 {
   ObjectType result(arguments.session());
   for (auto& argument : arguments) {
-    if (argument.name == boost::none) {
-      LOG(message_group::Warning, loc, arguments.documentRoot(), "object() argument is not named");
-    } else {
+    if (argument.name != boost::none) {
       result.set(argument.name->c_str(), std::move(argument.value));
+    } else if (argument->type() == Value::Type::VECTOR) {
+        for (const auto& v : argument->toVector()) {
+          auto& name = v[0];
+          auto& value = v[1];
+          result.set(name.toString(), std::move(value));
+        }
+    } else {
+      LOG(message_group::Warning, loc, arguments.documentRoot(), "object() argument is not named");
     }
   }
   return std::move(result);
