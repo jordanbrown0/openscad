@@ -1121,11 +1121,6 @@ void register_builtin_functions()
     "concat(number or string or vector, ...) -> vector",
   });
 
-  Builtins::init("object", new BuiltinFunction(&builtin_object),
-  {
-    "object([ object, ] [ key-val list, ] key=value, ...) -> object",
-  });
-
   Builtins::init("lookup", new BuiltinFunction(&builtin_lookup),
   {
     "lookup(key, <key,value> vector) -> value",
