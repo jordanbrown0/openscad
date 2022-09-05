@@ -531,6 +531,7 @@ public:
     [[nodiscard]] ObjectType clone() const;
     [[nodiscard]] const Value& get(const std::string& key) const;
     void set(const std::string& key, Value&& value);
+    void del(const std::string& key);
     Value operator==(const ObjectType& v) const;
     Value operator<(const ObjectType& v) const;
     Value operator>(const ObjectType& v) const;
