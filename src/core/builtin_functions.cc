@@ -470,6 +470,16 @@ Value builtin_object(const std::shared_ptr<const Context>& context, const Functi
   return std::move(result);
 }
 
+Value builtin_has_key(Arguments arguments, const Location& loc)
+{
+  if (!check_arguments("has_key", arguments, loc, { Value::Type::OBJECT, Value::Type::STRING })) {
+    return Value::undefined.clone();
+  }
+  const auto &obj = arguments[0]->toObject();
+  const auto &key = arguments[1]->toString();
+  return Value(obj.contains(key));
+}
+
 Value builtin_lookup(Arguments arguments, const Location& loc)
 {
   if (!check_arguments("lookup", arguments, loc, { Value::Type::NUMBER, Value::Type::VECTOR })) {

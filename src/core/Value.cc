@@ -1362,6 +1362,11 @@ void ObjectType::del(const std::string& key)
   }
 }
 
+bool ObjectType::contains(const std::string& key) const
+{
+  return ptr->map.find(key) != ptr->map.end();
+}
+
 const std::vector<std::string>& ObjectType::keys() const
 {
   return ptr->keys;
