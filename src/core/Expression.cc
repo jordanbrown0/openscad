@@ -43,8 +43,8 @@
 #include "Parameters.h"
 #include "printutils.h"
 #include "boost-utils.h"
-#include <boost/regex.hpp>
 #include <boost/assign/std/vector.hpp>
+
 using namespace boost::assign; // bring 'operator+=()' into scope
 
 Value Expression::checkUndef(Value&& val, const std::shared_ptr<const Context>& context) const {
@@ -386,6 +386,7 @@ Value MemberLookup::evaluate(const std::shared_ptr<const Context>& context) cons
     break;
   case Value::Type::OBJECT:
     return v[this->member];
+  case Value::Type::MODULE:
   default:
     break;
   }
@@ -406,6 +407,8 @@ Value FunctionDefinition::evaluate(const std::shared_ptr<const Context>& context
 {
   return FunctionPtr{FunctionType{context, expr, std::make_unique<AssignmentList>(parameters)}};
 }
+
+
 
 void FunctionDefinition::print(std::ostream& stream, const std::string& indent) const
 {
@@ -826,46 +829,59 @@ static void doForEach(
     operation(context);
     return;
   }
-
-  const std::string& variable_name = assignments[assignment_index]->getName();
-  Value variable_values = assignments[assignment_index]->getExpr()->evaluate(context);
-
-  if (variable_values.type() == Value::Type::RANGE) {
-    const RangeType& range = variable_values.toRange();
-    uint32_t steps = range.numValues();
-    if (steps >= 1000000) {
-      LOG(message_group::Warning, location, context->documentRoot(),
-          "Bad range parameter in for statement: too many elements (%1$lu)", steps);
-    } else {
-      for (double value : range) {
-        doForEach(assignments, location, operation, assignment_index + 1,
-                  *forContext(context, variable_name, value)
-                  );
+   const std::string& variable_name = assignments[assignment_index]->getName();
+   Value variable_values = assignments[assignment_index]->getExpr()->evaluate(context);
+   switch (variable_values.type()){
+      case Value::Type::RANGE:{
+         const RangeType& range = variable_values.toRange();
+         uint32_t steps = range.numValues();
+         if (steps >= 1000000) {
+            LOG(message_group::Warning, location, context->documentRoot(),
+            "Bad range parameter in for statement: too many elements (%1$lu)", steps);
+         } else {
+            for (double value : range) {
+               doForEach(assignments, location, operation, assignment_index + 1,
+               *forContext(context, variable_name, value)
+               );
+            }
+         }
       }
-    }
-  } else if (variable_values.type() == Value::Type::VECTOR) {
-    for (const auto& value : variable_values.toVector()) {
-      doForEach(assignments, location, operation, assignment_index + 1,
-                *forContext(context, variable_name, value.clone())
-                );
-    }
-  } else if (variable_values.type() == Value::Type::OBJECT) {
-    for (auto key : variable_values.toObject().keys()) {
-      doForEach(assignments, location, operation, assignment_index + 1,
-                *forContext(context, variable_name, key)
-                );
-    }
-  } else if (variable_values.type() == Value::Type::STRING) {
-    for (auto value : variable_values.toStrUtf8Wrapper()) {
-      doForEach(assignments, location, operation, assignment_index + 1,
-                *forContext(context, variable_name, Value(std::move(value)))
-                );
-    }
-  } else if (variable_values.type() != Value::Type::UNDEFINED) {
-    doForEach(assignments, location, operation, assignment_index + 1,
-              *forContext(context, variable_name, std::move(variable_values))
-              );
-  }
+      break;
+      case Value::Type::VECTOR:{
+         for (const auto& value : variable_values.toVector()) {
+            doForEach(assignments, location, operation, assignment_index + 1,
+            *forContext(context, variable_name, value.clone())
+            );
+         }
+      }
+      break;
+      case Value::Type::OBJECT:{
+         for (auto key : variable_values.toObject().keys()) {
+            doForEach(assignments, location, operation, assignment_index + 1,
+            *forContext(context, variable_name, key)
+            );
+         }
+      }
+      break;
+      case Value::Type::STRING:{
+         for (auto value : variable_values.toStrUtf8Wrapper()) {
+            doForEach(assignments, location, operation, assignment_index + 1,
+            *forContext(context, variable_name, Value(std::move(value)))
+            );
+         }
+      }
+      break;
+      case Value::Type::UNDEFINED:{
+
+      }
+      break;
+      default:{
+         doForEach(assignments, location, operation, assignment_index + 1,
+         *forContext(context, variable_name, std::move(variable_values))
+         );
+      }
+      break;
+   }
 }
 
 void LcFor::forEach(const AssignmentList& assignments, const Location& loc, const std::shared_ptr<const Context>& context, const std::function<void(const std::shared_ptr<const Context>&)>& operation)
@@ -951,3 +967,4 @@ void LcLet::print(std::ostream& stream, const std::string&) const
 {
   stream << "let(" << this->arguments << ") (" << *this->expr << ")";
 }
+
