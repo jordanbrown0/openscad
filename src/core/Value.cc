@@ -34,6 +34,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "Value.h"
+#include "Context.h"
 #include "Expression.h"
 #include "EvaluationSession.h"
 #include "printutils.h"
@@ -206,6 +207,7 @@ Value Value::clone() const {
   case Type::VECTOR:    return std::get<VectorType>(this->value).clone();
   case Type::OBJECT:    return std::get<ObjectType>(this->value).clone();
   case Type::FUNCTION:  return std::get<FunctionPtr>(this->value).clone();
+  case Type::MODULE :   return std::get<ModuleReferencePtr>(this->value).clone();
   default: assert(false && "unknown Value variant type"); return {};
   }
 }
@@ -226,6 +228,7 @@ std::string Value::typeName(Type type)
   case Type::RANGE:     return "range";
   case Type::OBJECT:    return "object";
   case Type::FUNCTION:  return "function";
+  case Type::MODULE:    return "module";
   default: assert(false && "unknown Value variant type"); return "<unknown>";
   }
 }
@@ -244,6 +247,7 @@ std::string getTypeName(const VectorType&) { return "vector"; }
 std::string getTypeName(const ObjectType&) { return "object"; }
 std::string getTypeName(const RangePtr&) { return "range"; }
 std::string getTypeName(const FunctionPtr&) { return "function"; }
+std::string getTypeName(const ModuleReferencePtr&) { return "module"; }
 
 bool Value::toBool() const
 {
@@ -257,6 +261,7 @@ bool Value::toBool() const
   case Type::RANGE:     return true;
   case Type::OBJECT:    return !std::get<ObjectType>(this->value).empty();
   case Type::FUNCTION:  return true;
+  case Type::MODULE:  return true;
   default: assert(false && "unknown Value variant type"); return false;
   }
   // NOLINTEND(bugprone-branch-clone)
@@ -377,6 +382,10 @@ public:
   void operator()(const FunctionPtr& v) const {
     stream << *v;
   }
+
+  void operator()(const ModuleReferencePtr& v) const {
+    stream << *v;
+  }
 };
 
 class tostring_visitor
@@ -433,6 +442,10 @@ public:
   }
 
   std::string operator()(const FunctionPtr& v) const {
+    return STR(*v);
+  }
+
+  std::string operator()(const ModuleReferencePtr& v) const {
     return STR(*v);
   }
 };
@@ -709,6 +722,11 @@ const RangeType& Value::toRange() const
   } else return RangeType::EMPTY;
 }
 
+const ModuleReference& Value::toModuleReference() const
+{
+  return *boost::get<ModuleReferencePtr>(this->value);
+}
+
 const FunctionType& Value::toFunction() const
 {
   return *std::get<FunctionPtr>(this->value);
@@ -738,7 +756,78 @@ Value FunctionType::operator>=(const FunctionType& /*other*/) const {
   return Value::undef("operation undefined (function >= function)");
 }
 
+<<<<<<< HEAD
 Value UndefType::operator<(const UndefType& /*other*/) const {
+=======
+Value ModuleReference::operator==(const ModuleReference& other) const {
+  return this->getUniqueID() == other.getUniqueID();
+}
+Value ModuleReference::operator!=(const ModuleReference& other) const {
+  return this->getUniqueID() != other.getUniqueID();
+}
+Value ModuleReference::operator<(const ModuleReference& other) const {
+  return this->getUniqueID() < other.getUniqueID();
+}
+Value ModuleReference::operator>(const ModuleReference& other) const {
+  return this->getUniqueID() > other.getUniqueID();
+}
+Value ModuleReference::operator<=(const ModuleReference& other) const {
+ return this->getUniqueID() <= other.getUniqueID();
+}
+Value ModuleReference::operator>=(const ModuleReference& other) const {
+  return this->getUniqueID() >= other.getUniqueID();
+}
+
+bool ModuleReference::transformToInstantiationArgs(
+      AssignmentList const & evalContextArgs,
+      const Location& loc,
+      const std::shared_ptr<const Context> evalContext,
+      AssignmentList & argsOut
+) const
+{
+    if ( this->module_literal_parameters->empty() && this->module_args->empty()){
+       argsOut.assign(evalContextArgs.begin(),evalContextArgs.end());
+       return true;
+    }
+
+    if ( this->module_literal_parameters->empty() && evalContextArgs.empty()){
+       argsOut.assign(this->module_args->begin(),this->module_args->end());
+       return true;
+    }
+
+    if ( ! this->module_literal_parameters->empty() ){
+       auto const nParams = this->module_literal_parameters->size();
+       auto const nArgs = evalContextArgs.size();
+       auto const nArgsToProcess = std::min(nArgs,nParams);
+       if ( nArgs > nArgsToProcess){
+          LOG(message_group::Warning, loc, evalContext->documentRoot(),"Ignoring Arguments greater than number of params");
+       }
+       for (auto i = 0; i < nArgsToProcess;++i){
+          auto const & param = this->module_literal_parameters->at(i);
+          auto const & arg = evalContextArgs.at(i);
+          auto new_arg = new Assignment(param->getName(),loc);
+          new_arg->setExpr(arg->getExpr());
+          argsOut.push_back(std::shared_ptr<Assignment>(new_arg));
+       }
+       for (auto i = nArgsToProcess; i < nParams; ++i ){
+          auto const & param = this->module_literal_parameters->at(i);
+          auto newArg = new Assignment(param->getName());
+          auto expr = param->getExpr();
+          if( !expr){
+            LOG(message_group::Warning, loc, evalContext->documentRoot(),"Default arguments not supplied");
+            return false;
+          }
+          newArg->setExpr(param->getExpr());
+          argsOut.push_back(std::shared_ptr<Assignment>(newArg));
+       }
+       return true;
+    }
+    LOG(message_group::Warning, loc, evalContext->documentRoot(),"Invalid Arguments format");
+    return false;
+}
+
+Value UndefType::operator<(const UndefType& other) const {
+>>>>>>> f8a649852 (ModuleLiterals:  making openSCAD modules first class.)
   return Value::undef("operation undefined (undefined < undefined)");
 }
 Value UndefType::operator>(const UndefType& /*other*/) const {
@@ -1306,6 +1395,35 @@ std::ostream& operator<<(std::ostream& stream, const FunctionType& f)
   }
   stream << ") " << *f.getExpr();
   return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const ModuleReference& m)
+{
+   stream << "module";
+   auto const & params = m.getModuleLiteralParameters();
+   if ( ! params->empty()){
+      stream << "(";
+      bool first = true;
+      for (const auto& par : *params) {
+         if  (! first){
+            stream << ", ";
+         }else{
+            first = false;
+         }
+         stream << par->getName();
+         auto const expr = par->getExpr();
+         if (expr) {
+           stream << " = " << *expr;
+         }
+      }
+      stream << ")";
+   }
+   stream << " " << m.getModuleName() ;
+   auto const & args = m.getModuleArgs();
+   if ( ! args->empty() ){
+      stream << "(" << *args << ")" ;
+   }
+   return stream;
 }
 
 // called by clone()

@@ -51,6 +51,7 @@ const Feature Feature::ExperimentalTextMetricsFunctions("textmetrics", "Enable t
 const Feature Feature::ExperimentalImportFunction("import-function", "Enable import function returning data instead of geometry.");
 const Feature Feature::ExperimentalObjectFunction("object-function", "Enable object function to allow user creation of objects.");
 const Feature Feature::ExperimentalSortStl("sort-stl", "Sort the STL output for predictable, diffable results.");
+const Feature Feature::ExperimentalModuleLiteral("module-literal", "Enable first class support for modules.");
 
 Feature::Feature(const std::string& name, std::string description)
   : name(name), description(std::move(description))

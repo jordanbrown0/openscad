@@ -32,6 +32,7 @@ public:
   static const Feature ExperimentalImportFunction;
   static const Feature ExperimentalObjectFunction;
   static const Feature ExperimentalSortStl;
+  static const Feature ExperimentalModuleLiteral;
 
   [[nodiscard]] const std::string& get_name() const;
   [[nodiscard]] const std::string& get_description() const;
