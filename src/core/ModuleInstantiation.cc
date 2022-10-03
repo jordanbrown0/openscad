@@ -63,6 +63,11 @@ std::shared_ptr<AbstractNode> ModuleInstantiation::evaluate(const std::shared_pt
    std::string const old_name = this->modname; //N.B will be if id_exp ! empty
    AssignmentList const old_args = this->arguments;
 
+    auto setTo = [this](std::string const & name , AssignmentList const & args){
+     const_cast<ModuleInstantiation*>(this)->modname = name;
+     const_cast<ModuleInstantiation*>(this)->arguments = args;
+   };
+
    if ( id_expr) {
       auto const value = id_expr->evaluate(context);
       switch(value.type()){
@@ -71,8 +76,24 @@ std::shared_ptr<AbstractNode> ModuleInstantiation::evaluate(const std::shared_pt
             const_cast<ModuleInstantiation*>(this)->modname = value.toString();
          break;
          case Value::Type::MODULE:{
-            auto const & modref = value.toModuleReference();
-            const_cast<ModuleInstantiation*>(this)->modname = modref.getModuleName();
+            auto const & modRef = value.toModuleReference();
+            if ( modRef.getModuleName() == this->name() ){
+               LOG(message_group::Warning, this->loc, context->documentRoot(), "Ignoring recursive module reference '%1$s'", this->name());
+               setTo(old_name,old_args);
+               return nullptr;
+            }
+            AssignmentList argsOut;
+            if (modRef.transformToInstantiationArgs(
+               this->arguments,
+               this->loc,
+               context,
+               argsOut
+            )){
+               setTo(modRef.getModuleName(),argsOut);
+            }else{
+               setTo(old_name,old_args);
+               return nullptr;
+            }
          }
          break;
          default:
@@ -82,10 +103,6 @@ std::shared_ptr<AbstractNode> ModuleInstantiation::evaluate(const std::shared_pt
       }
    }
 
-   auto setTo = [this](std::string const & name , AssignmentList const & args){
-     const_cast<ModuleInstantiation*>(this)->modname = name;
-     const_cast<ModuleInstantiation*>(this)->arguments = args;
-   };
    int32_t loopcount = 0;
    // max number of references to reference
    int32_t constexpr maxLoopCount = 1000;
