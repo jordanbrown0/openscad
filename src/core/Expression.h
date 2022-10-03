@@ -199,7 +199,8 @@ public:
   shared_ptr<Expression> expr;
 };
 
-
+class ModuleLiteral;
+/*
 class ModuleLiteral : public Expression
 {
 public:
@@ -213,6 +214,7 @@ public:
   AssignmentList module_literal_parameters;
   AssignmentList module_arguments;
 };
+*/
 
 using ExpressionList = std::list<std::shared_ptr<Expression> >;
 

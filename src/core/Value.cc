@@ -722,11 +722,6 @@ const RangeType& Value::toRange() const
   } else return RangeType::EMPTY;
 }
 
-const ModuleReference& Value::toModuleReference() const
-{
-  return *boost::get<ModuleReferencePtr>(this->value);
-}
-
 const FunctionType& Value::toFunction() const
 {
   return *std::get<FunctionPtr>(this->value);
@@ -756,9 +751,6 @@ Value FunctionType::operator>=(const FunctionType& /*other*/) const {
   return Value::undef("operation undefined (function >= function)");
 }
 
-<<<<<<< HEAD
-Value UndefType::operator<(const UndefType& /*other*/) const {
-=======
 Value ModuleReference::operator==(const ModuleReference& other) const {
   return this->getUniqueID() == other.getUniqueID();
 }
@@ -827,8 +819,7 @@ bool ModuleReference::transformToInstantiationArgs(
     return false;
 }
 
-Value UndefType::operator<(const UndefType& other) const {
->>>>>>> f8a649852 (ModuleLiterals:  making openSCAD modules first class.)
+Value UndefType::operator<(const UndefType& /*other*/) const {
   return Value::undef("operation undefined (undefined < undefined)");
 }
 Value UndefType::operator>(const UndefType& /*other*/) const {
@@ -1396,35 +1387,6 @@ std::ostream& operator<<(std::ostream& stream, const FunctionType& f)
   }
   stream << ") " << *f.getExpr();
   return stream;
-}
-
-std::ostream& operator<<(std::ostream& stream, const ModuleReference& m)
-{
-   stream << "module";
-   auto const & params = m.getModuleLiteralParameters();
-   if ( ! params->empty()){
-      stream << "(";
-      bool first = true;
-      for (const auto& par : *params) {
-         if  (! first){
-            stream << ", ";
-         }else{
-            first = false;
-         }
-         stream << par->getName();
-         auto const expr = par->getExpr();
-         if (expr) {
-           stream << " = " << *expr;
-         }
-      }
-      stream << ")";
-   }
-   stream << " " << m.getModuleName() ;
-   auto const & args = m.getModuleArgs();
-   if ( ! args->empty() ){
-      stream << "(" << *args << ")" ;
-   }
-   return stream;
 }
 
 // called by clone()
