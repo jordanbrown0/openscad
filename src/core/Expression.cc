@@ -43,8 +43,8 @@
 #include "Parameters.h"
 #include "printutils.h"
 #include "boost-utils.h"
-#include <boost/regex.hpp>
 #include <boost/assign/std/vector.hpp>
+
 using namespace boost::assign; // bring 'operator+=()' into scope
 
 Value Expression::checkUndef(Value&& val, const std::shared_ptr<const Context>& context) const {
