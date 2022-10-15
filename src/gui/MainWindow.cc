@@ -39,7 +39,6 @@
 #include "node.h"
 #include "CSGNode.h"
 #include "memory.h"
-#include "Expression.h"
 #include "ScopeContext.h"
 #include "progress.h"
 #include "dxfdim.h"

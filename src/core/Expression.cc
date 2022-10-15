@@ -43,8 +43,8 @@
 #include "Parameters.h"
 #include "printutils.h"
 #include "boost-utils.h"
+#include <boost/regex.hpp>
 #include <boost/assign/std/vector.hpp>
-
 using namespace boost::assign; // bring 'operator+=()' into scope
 
 Value Expression::checkUndef(Value&& val, const std::shared_ptr<const Context>& context) const {
@@ -333,6 +333,54 @@ void Vector::print(std::ostream& stream, const std::string&) const
   stream << "]";
 }
 
+Object::Object(const Location& loc) : Expression(loc), literal_flag(unknown)
+{
+}
+
+bool Object::isLiteral() const {
+  if (unknown(literal_flag)) {
+    for (const auto& v : this->values) {
+      if (!v->isLiteral()) {
+        literal_flag = false;
+        return false;
+      }
+    }
+    literal_flag = true;
+    return true;
+  } else {
+    return bool(literal_flag);
+  }
+}
+
+void Object::set(const char *key, Expression *expr)
+{
+  this->keys.emplace_back(key);
+  this->values.emplace_back(expr);
+}
+
+Value Object::evaluate(const std::shared_ptr<const Context>& context) const
+{
+  ObjectType obj(context->session());
+  for (size_t i = 0; i < this->keys.size(); i++) {
+    obj.set(this->keys[i], this->values[i]->evaluate(context));
+  }
+  return std::move(obj);
+}
+
+// This is used to print an object literal in the AST.
+void Object::print(std::ostream& stream, const std::string&) const
+{
+  stream << "{";
+  bool first = true;
+  for (size_t i = 0; i < this->keys.size(); i++) {
+    if (first) first = false;
+    else stream << ", ";
+    // NEEDSWORK does not handle special characters in the key
+    stream << Value(this->keys[i]) << ":" << *this->values[i];
+  }
+  stream << "}";
+}
+
 Lookup::Lookup(std::string name, const Location& loc) : Expression(loc), name(std::move(name))
 {
 }
@@ -386,7 +434,6 @@ Value MemberLookup::evaluate(const std::shared_ptr<const Context>& context) cons
     break;
   case Value::Type::OBJECT:
     return v[this->member];
-  case Value::Type::MODULE:
   default:
     break;
   }
@@ -408,8 +455,6 @@ Value FunctionDefinition::evaluate(const std::shared_ptr<const Context>& context
   return FunctionPtr{FunctionType{context, expr, std::make_unique<AssignmentList>(parameters)}};
 }
 
-
-
 void FunctionDefinition::print(std::ostream& stream, const std::string& indent) const
 {
   stream << indent << "function(";
@@ -422,6 +467,21 @@ void FunctionDefinition::print(std::ostream& stream, const std::string& indent) 
     first = false;
   }
   stream << ") " << *this->expr;
+}
+
+ModuleDefinition::ModuleDefinition(AbstractModule *mod, const Location& loc)
+  : Expression(loc), context(nullptr), mod(mod)
+{
+}
+
+Value ModuleDefinition::evaluate(const std::shared_ptr<const Context>& context) const
+{
+  return ModulePtr{ModuleType{context, mod}};
+}
+
+void ModuleDefinition::print(std::ostream& stream, const std::string& indent) const
+{
+  mod->print(stream, indent);
 }
 
 /**
@@ -829,59 +889,46 @@ static void doForEach(
     operation(context);
     return;
   }
-   const std::string& variable_name = assignments[assignment_index]->getName();
-   Value variable_values = assignments[assignment_index]->getExpr()->evaluate(context);
-   switch (variable_values.type()){
-      case Value::Type::RANGE:{
-         const RangeType& range = variable_values.toRange();
-         uint32_t steps = range.numValues();
-         if (steps >= 1000000) {
-            LOG(message_group::Warning, location, context->documentRoot(),
-            "Bad range parameter in for statement: too many elements (%1$lu)", steps);
-         } else {
-            for (double value : range) {
-               doForEach(assignments, location, operation, assignment_index + 1,
-               *forContext(context, variable_name, value)
-               );
-            }
-         }
-      }
-      break;
-      case Value::Type::VECTOR:{
-         for (const auto& value : variable_values.toVector()) {
-            doForEach(assignments, location, operation, assignment_index + 1,
-            *forContext(context, variable_name, value.clone())
-            );
-         }
-      }
-      break;
-      case Value::Type::OBJECT:{
-         for (auto key : variable_values.toObject().keys()) {
-            doForEach(assignments, location, operation, assignment_index + 1,
-            *forContext(context, variable_name, key)
-            );
-         }
-      }
-      break;
-      case Value::Type::STRING:{
-         for (auto value : variable_values.toStrUtf8Wrapper()) {
-            doForEach(assignments, location, operation, assignment_index + 1,
-            *forContext(context, variable_name, Value(std::move(value)))
-            );
-         }
-      }
-      break;
-      case Value::Type::UNDEFINED:{
 
+  const std::string& variable_name = assignments[assignment_index]->getName();
+  Value variable_values = assignments[assignment_index]->getExpr()->evaluate(context);
+
+  if (variable_values.type() == Value::Type::RANGE) {
+    const RangeType& range = variable_values.toRange();
+    uint32_t steps = range.numValues();
+    if (steps >= 1000000) {
+      LOG(message_group::Warning, location, context->documentRoot(),
+          "Bad range parameter in for statement: too many elements (%1$lu)", steps);
+    } else {
+      for (double value : range) {
+        doForEach(assignments, location, operation, assignment_index + 1,
+                  *forContext(context, variable_name, value)
+                  );
       }
-      break;
-      default:{
-         doForEach(assignments, location, operation, assignment_index + 1,
-         *forContext(context, variable_name, std::move(variable_values))
-         );
-      }
-      break;
-   }
+    }
+  } else if (variable_values.type() == Value::Type::VECTOR) {
+    for (const auto& value : variable_values.toVector()) {
+      doForEach(assignments, location, operation, assignment_index + 1,
+                *forContext(context, variable_name, value.clone())
+                );
+    }
+  } else if (variable_values.type() == Value::Type::OBJECT) {
+    for (auto key : variable_values.toObject().keys()) {
+      doForEach(assignments, location, operation, assignment_index + 1,
+                *forContext(context, variable_name, key)
+                );
+    }
+  } else if (variable_values.type() == Value::Type::STRING) {
+    for (auto value : variable_values.toStrUtf8Wrapper()) {
+      doForEach(assignments, location, operation, assignment_index + 1,
+                *forContext(context, variable_name, Value(std::move(value)))
+                );
+    }
+  } else if (variable_values.type() != Value::Type::UNDEFINED) {
+    doForEach(assignments, location, operation, assignment_index + 1,
+              *forContext(context, variable_name, std::move(variable_values))
+              );
+  }
 }
 
 void LcFor::forEach(const AssignmentList& assignments, const Location& loc, const std::shared_ptr<const Context>& context, const std::function<void(const std::shared_ptr<const Context>&)>& operation)
@@ -967,4 +1014,3 @@ void LcLet::print(std::ostream& stream, const std::string&) const
 {
   stream << "let(" << this->arguments << ") (" << *this->expr << ")";
 }
-
