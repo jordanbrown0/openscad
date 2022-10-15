@@ -43,6 +43,11 @@ BuiltinModule::BuiltinModule(std::shared_ptr<AbstractNode>(*instantiate)(const M
     };
 }
 
+void BuiltinModule::print(std::ostream& stream, const std::string& indent) const
+{
+    stream << "NEEDSWORK something about a BuiltinModule";
+}
+
 std::shared_ptr<AbstractNode> BuiltinModule::instantiate(const std::shared_ptr<const Context>& /*defining_context*/, const ModuleInstantiation *inst, const std::shared_ptr<const Context>& context) const
 {
   return do_instantiate(inst, context);

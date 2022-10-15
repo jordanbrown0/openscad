@@ -15,14 +15,13 @@
 
 #include "Assignment.h"
 #include "memory.h"
-#include "ValuePtr.h"
-#include "ModuleReference.h"
 
 class tostring_visitor;
 class tostream_visitor;
 class Context;
 class Expression;
 class Value;
+class AbstractModule;
 
 class QuotedString : public std::string
 {
@@ -282,6 +281,29 @@ private:
 using FunctionPtr = ValuePtr<FunctionType>;
 
 std::ostream& operator<<(std::ostream& stream, const FunctionType& f);
+
+class ModuleType
+{
+public:
+  ModuleType(std::shared_ptr<const Context> context, const AbstractModule *mod)
+    : context(context), mod(mod) { }
+  Value operator==(const ModuleType& other) const;
+  Value operator!=(const ModuleType& other) const;
+  Value operator<(const ModuleType& other) const;
+  Value operator>(const ModuleType& other) const;
+  Value operator<=(const ModuleType& other) const;
+  Value operator>=(const ModuleType& other) const;
+
+  const std::shared_ptr<const Context>& getContext() const { return context; }
+  const AbstractModule *getModule() const { return mod; }
+private:
+  std::shared_ptr<const Context> context;
+  const AbstractModule *mod;
+};
+
+using ModulePtr = ValuePtr<ModuleType>;
+
+std::ostream& operator<<(std::ostream& stream, const ModuleType& f);
 
 
 
@@ -587,8 +609,8 @@ public:
   [[nodiscard]] EmbeddedVectorType& toEmbeddedVectorNonConst();
   [[nodiscard]] const RangeType& toRange() const;
   [[nodiscard]] const FunctionType& toFunction() const;
+  [[nodiscard]] const ModuleType& toModule() const;
   [[nodiscard]] const ObjectType& toObject() const;
-  [[nodiscard]] const ModuleReference& toModuleReference() const;
 
   // Other conversion utility functions
   bool getDouble(double& v) const;
@@ -631,7 +653,7 @@ public:
     return stream;
   }
 
-  using Variant = std::variant<UndefType, bool, double, str_utf8_wrapper, VectorType, EmbeddedVectorType, RangePtr, FunctionPtr, ObjectType, ModuleReferencePtr>;
+  using Variant = std::variant<UndefType, bool, double, str_utf8_wrapper, VectorType, EmbeddedVectorType, RangePtr, FunctionPtr, ObjectType, ModulePtr>;
 
 
   static_assert(sizeof(Value::Variant) <= 24, "Memory size of Value too big");

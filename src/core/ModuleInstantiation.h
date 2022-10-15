@@ -3,7 +3,6 @@
 #include "AST.h"
 #include "LocalScope.h"
 #include <utility>
-#include <utility>
 #include <vector>
 
 using ModuleInstantiationList = std::vector<class ModuleInstantiation *>;
@@ -13,6 +12,8 @@ class ModuleInstantiation : public ASTNode
 public:
   ModuleInstantiation(std::string name, AssignmentList args = AssignmentList(), const Location& loc = Location::NONE)
     : ASTNode(loc), arguments(std::move(args)), modname(std::move(name)) { }
+  ModuleInstantiation(Expression *ref_expr, AssignmentList args = AssignmentList(), const Location& loc = Location::NONE);
+
   virtual void print(std::ostream& stream, const std::string& indent, const bool inlined) const;
   void print(std::ostream& stream, const std::string& indent) const override { print(stream, indent, false); }
   std::shared_ptr<AbstractNode> evaluate(const std::shared_ptr<const Context>& context) const;
@@ -30,7 +31,11 @@ public:
   bool tag_background{false};
 protected:
   std::string modname;
-  std::shared_ptr<Expression> id_expr;
+  std::shared_ptr<Expression> ref_expr;
+private:
+  bool isLookup;
+  boost::optional<InstantiableModule> evaluate_module_expression(
+    const std::shared_ptr<const Context>& context) const;
 };
 
 class IfElseModuleInstantiation : public ModuleInstantiation

@@ -57,6 +57,11 @@ boost::optional<CallableFunction> ContextFrame::lookup_local_function(const std:
 
 boost::optional<InstantiableModule> ContextFrame::lookup_local_module(const std::string& /*name*/, const Location& /*loc*/) const
 {
+  boost::optional<const Value&> value = lookup_local_variable(name);
+  if (value && value->type() == Value::Type::MODULE) {
+    ModuleType mod = value->toModule();
+    return InstantiableModule{mod.getContext(), mod.getModule()};
+  }
   return boost::none;
 }
 
