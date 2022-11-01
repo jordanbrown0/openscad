@@ -98,6 +98,7 @@ bool fileEnded=false;
   double number;
   class Expression *expr;
   class Vector *vec;
+  class Object *obj;
   class ModuleInstantiation *inst;
   class IfElseModuleInstantiation *ifelse;
   class Assignment *arg;
@@ -144,6 +145,7 @@ bool fileEnded=false;
 %type <expr> unary
 %type <expr> primary
 %type <vec> vector_elements
+%type <obj> object_elements
 %type <expr> list_comprehension_elements
 %type <expr> list_comprehension_elements_p
 %type <expr> vector_element
@@ -164,6 +166,8 @@ bool fileEnded=false;
 %type <text> module_id
 %type <expr> module_ref
 %type <text> reserved_but_allowed_in_module_name
+%type <text> reserved_but_allowed_in_object_key
+%type <text> object_key
 
 %debug
 %locations
@@ -563,6 +567,14 @@ primary
             {
               $$ = $2;
             }
+        | '{' '}'
+            {
+              $$ = new Object(LOCD("object", @$));
+            }
+        | '{' object_elements optional_trailing_comma '}'
+            {
+              $$ = $2;
+            }
 		;
 
 expr_or_empty
@@ -639,6 +651,41 @@ vector_elements
 vector_element
         : list_comprehension_elements_p
         | expr
+        ;
+
+object_elements
+        : object_key ':' expr
+            {
+              $$ = new Object(LOCD("object", @$));
+              $$->set($1, $3);
+              free($1);
+            }
+        | object_elements ',' object_key ':' expr
+            {
+              $$ = $1;
+              $$->set($3, $5);
+              free($3);
+            }
+        ;
+
+reserved_but_allowed_in_object_key
+        : reserved_but_allowed_in_module_name
+        | TOK_USE
+        | TOK_MODULE { $$ = strdup("module"); }
+        | TOK_FUNCTION { $$ = strdup("function"); }
+        | TOK_IF { $$ = strdup("if"); }
+        | TOK_ELSE { $$ = strdup("else"); }
+        // Maybe not these next three; maybe they should be reserved for indexed by bool
+        // and indexed by undef.
+        | TOK_TRUE { $$ = strdup("true"); }
+        | TOK_FALSE { $$ = strdup("false"); }
+        | TOK_UNDEF { $$ = strdup("undef"); }
+        ;
+
+object_key
+        : TOK_STRING
+        | TOK_ID
+        | reserved_but_allowed_in_object_key
         ;
 
 parameters

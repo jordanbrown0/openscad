@@ -148,6 +148,19 @@ private:
   mutable boost::tribool literal_flag; // cache if already computed
 };
 
+class Object : public Expression
+{
+public:
+  Object(const Location& loc);
+  Value evaluate(const std::shared_ptr<const Context>& context) const override;
+  void print(std::ostream& stream, const std::string& indent) const override;
+  void set(const char *, Expression *expr);
+  bool isLiteral() const override;
+private:
+  std::unordered_map<std::string, shared_ptr<Expression>> children;
+  mutable boost::tribool literal_flag; // cache if already computed
+};
+
 class Lookup : public Expression
 {
 public:

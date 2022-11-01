@@ -333,6 +333,52 @@ void Vector::print(std::ostream& stream, const std::string&) const
   stream << "]";
 }
 
+Object::Object(const Location& loc) : Expression(loc), literal_flag(unknown)
+{
+}
+
+bool Object::isLiteral() const {
+  if (unknown(literal_flag)) {
+    for (const auto& e : this->children) {
+      if (!e.second->isLiteral()) {
+        literal_flag = false;
+        return false;
+      }
+    }
+    literal_flag = true;
+    return true;
+  } else {
+    return bool(literal_flag);
+  }
+}
+
+void Object::set(const char *key, Expression *expr)
+{
+  this->children.emplace(key, expr);
+}
+
+Value Object::evaluate(const std::shared_ptr<const Context>& context) const
+{
+  ObjectType obj(context->session());
+  for (const auto& e : this->children) {
+    obj.set(e.first, e.second->evaluate(context));
+  }
+  return std::move(obj);
+}
+
+void Object::print(std::ostream& stream, const std::string&) const
+{
+  stream << "{";
+  bool first = true;
+  for (const auto& e : this->children) {
+    if (first) first = false;
+    else stream << ", ";
+    // NEEDSWORK does not handle special characters in the key
+    stream << Value(e.first) << ":" << *e.second;
+  }
+  stream << "}";
+}
+
 Lookup::Lookup(std::string name, const Location& loc) : Expression(loc), name(std::move(name))
 {
 }

@@ -1430,15 +1430,27 @@ ObjectType ObjectType::clone() const
   return ObjectType(this->ptr);
 }
 
+static bool ObjectType::keyIsIdentifier(const std::string& k)
+{
+  return true;
+}
+
 std::ostream& operator<<(std::ostream& stream, const ObjectType& v)
 {
+  std::string comma = "";
   stream << "{ ";
   auto iter = v.ptr->keys.begin();
   if (iter != v.ptr->keys.end()) {
-    str_utf8_wrapper k(*iter);
     for (; iter != v.ptr->keys.end(); ++iter) {
-      str_utf8_wrapper k2(*iter);
-      stream << k2.toString() << " = " << v[k2] << "; ";
+      stream << comma;
+      str_utf8_wrapper k(*iter);
+      if (ObjectType::keyIsIdentifier(k.toString())) {
+        stream << *iter;
+      } else {
+        stream << QuotedString(k.toString());
+      }
+      stream << " : " << v[k];
+      comma = ", ";
     }
   }
   stream << "}";
