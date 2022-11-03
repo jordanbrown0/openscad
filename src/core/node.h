@@ -66,6 +66,8 @@ public:
   int idx; // Node index (unique per tree)
 
   std::shared_ptr<const AbstractNode> getNodeByID(int idx, std::deque<std::shared_ptr<const AbstractNode>>& path) const;
+  virtual std::shared_ptr<AbstractNode> clone() const = 0;
+  std::shared_ptr<AbstractNode> cloner() const;
 };
 
 class AbstractIntersectionNode : public AbstractNode
@@ -75,6 +77,7 @@ public:
   AbstractIntersectionNode(const ModuleInstantiation *mi) : AbstractNode(mi) { }
   std::string toString() const override;
   std::string name() const override;
+  std::shared_ptr<AbstractNode> clone() const override;
 };
 
 class AbstractPolyNode : public AbstractNode
@@ -99,6 +102,7 @@ public:
   VISITABLE();
   ListNode(const ModuleInstantiation *mi) : AbstractNode(mi) { }
   std::string name() const override;
+  std::shared_ptr<AbstractNode> clone() const override;
 };
 
 /*!
@@ -112,6 +116,7 @@ public:
   GroupNode(const ModuleInstantiation *mi, std::string name = "") : AbstractNode(mi), _name(std::move(name)) { }
   std::string name() const override;
   std::string verbose_name() const override;
+  std::shared_ptr<AbstractNode> clone() const override;
 private:
   const std::string _name;
 };
@@ -124,6 +129,18 @@ class RootNode : public GroupNode
 public:
   VISITABLE();
   RootNode() : GroupNode(&mi), mi("group") { }
+  std::string name() const override;
+private:
+  ModuleInstantiation mi;
+};
+
+// Top of a geometry literal.  Should perhaps be an instance of RootNode
+// instead, since it's kind of a root node.
+class LiteralNode : public GroupNode
+{
+public:
+  VISITABLE();
+  LiteralNode() : GroupNode(&mi), mi("literal") { }
   std::string name() const override;
 private:
   ModuleInstantiation mi;

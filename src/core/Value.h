@@ -22,6 +22,7 @@ class Context;
 class Expression;
 class Value;
 class AbstractModule;
+class AbstractNode;
 
 class QuotedString : public std::string
 {
@@ -368,7 +369,8 @@ public:
     RANGE,
     FUNCTION,
     OBJECT,
-    MODULE
+    MODULE,
+    GEOMETRY
   };
   // FIXME: eventually remove this in favor of specific messages for each undef usage
   static const Value undefined;
@@ -541,6 +543,24 @@ public:
     static Value Empty() { return EmbeddedVectorType(nullptr); }
   };
 
+  class GeometryType
+  {
+private:
+    std::shared_ptr<AbstractNode> node;
+
+public:
+    GeometryType(std::shared_ptr<AbstractNode> node);
+    GeometryType clone() const;
+    Value operator==(const GeometryType& v) const;
+    Value operator<(const GeometryType& v) const;
+    Value operator>(const GeometryType& v) const;
+    Value operator!=(const GeometryType& v) const;
+    Value operator<=(const GeometryType& v) const;
+    Value operator>=(const GeometryType& v) const;
+    void print(std::ostream& stream) const;
+    std::shared_ptr<AbstractNode> getNodeClone() const;
+  };
+
   class ObjectType
   {
 protected:
@@ -601,6 +621,7 @@ public:
   [[nodiscard]] bool isUncheckedUndef() const;
 
   // Conversion to std::variant "BoundedType"s. const ref where appropriate.
+<<<<<<< HEAD
   [[nodiscard]] bool toBool() const;
   [[nodiscard]] double toDouble() const;
   [[nodiscard]] const str_utf8_wrapper& toStrUtf8Wrapper() const;
@@ -612,6 +633,7 @@ public:
   [[nodiscard]] const FunctionType& toFunction() const;
   [[nodiscard]] const ModuleType& toModule() const;
   [[nodiscard]] const ObjectType& toObject() const;
+  [[nodiscard]] const GeometryType& toGeometry() const;
 
   // Other conversion utility functions
   bool getDouble(double& v) const;
@@ -654,7 +676,7 @@ public:
     return stream;
   }
 
-  using Variant = std::variant<UndefType, bool, double, str_utf8_wrapper, VectorType, EmbeddedVectorType, RangePtr, FunctionPtr, ObjectType, ModulePtr>;
+  using Variant = std::variant<UndefType, bool, double, str_utf8_wrapper, VectorType, EmbeddedVectorType, RangePtr, FunctionPtr, ObjectType, ModulePtr, GeometryType>;
 
 
   static_assert(sizeof(Value::Variant) <= 24, "Memory size of Value too big");
@@ -674,7 +696,9 @@ struct Value::ObjectType::ObjectObject {
 };
 
 std::ostream& operator<<(std::ostream& stream, const Value::ObjectType& u);
+std::ostream& operator<<(std::ostream& stream, const Value::GeometryType& u);
 
 using VectorType = Value::VectorType;
 using EmbeddedVectorType = Value::EmbeddedVectorType;
 using ObjectType = Value::ObjectType;
+using GeometryType = Value::GeometryType;

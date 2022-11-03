@@ -25,6 +25,7 @@ public:
   ImportNode(const ModuleInstantiation *mi, ImportType type) : LeafNode(mi), type(type) { }
   std::string toString() const override;
   std::string name() const override;
+  std::shared_ptr<AbstractNode> clone() const override;
 
   ImportType type;
   Filename filename;

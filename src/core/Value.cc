@@ -207,6 +207,7 @@ Value Value::clone() const {
   case Type::OBJECT:    return std::get<ObjectType>(this->value).clone();
   case Type::FUNCTION:  return std::get<FunctionPtr>(this->value).clone();
   case Type::MODULE:    return std::get<ModulePtr>(this->value).clone();
+  case Type::GEOMETRY:  return std::get<GeometryType>(this->value).clone();
   default: assert(false && "unknown Value variant type"); return {};
   }
 }
@@ -247,6 +248,7 @@ std::string getTypeName(const ObjectType&) { return "object"; }
 std::string getTypeName(const RangePtr&) { return "range"; }
 std::string getTypeName(const FunctionPtr&) { return "function"; }
 std::string getTypeName(const ModulePtr&) { return "module"; }
+std::string getTypeName(const GeometryType&) { return "geometry"; }
 
 bool Value::toBool() const
 {
@@ -261,6 +263,7 @@ bool Value::toBool() const
   case Type::OBJECT:    return !std::get<ObjectType>(this->value).empty();
   case Type::FUNCTION:  return true;
   case Type::MODULE:    return true;
+  case Type::GEOMETRY:  return true;  // NEEDSWORK would be cool if it meant "not empty"
   default: assert(false && "unknown Value variant type"); return false;
   }
   // NOLINTEND(bugprone-branch-clone)
@@ -446,6 +449,10 @@ public:
 
   std::string operator()(const ModulePtr& v) const {
     return STR(*v);
+  }
+
+  std::string operator()(const GeometryType& v) const {
+    return STR(v);
   }
 };
 
@@ -673,6 +680,13 @@ EmbeddedVectorType& Value::toEmbeddedVectorNonConst()
 const EmbeddedVectorType& Value::toEmbeddedVector() const
 {
   return std::get<EmbeddedVectorType>(this->value);
+}
+
+const GeometryType& Value::toGeometry() const
+{
+  static const GeometryType empty(nullptr);
+  const GeometryType *v = std::get_if<GeometryType>(&this->value);
+  return v ? *v : empty;
 }
 
 bool Value::getVec2(double& x, double& y, bool ignoreInfinite) const
@@ -1430,7 +1444,7 @@ ObjectType ObjectType::clone() const
   return ObjectType(this->ptr);
 }
 
-static bool ObjectType::keyIsIdentifier(const std::string& k)
+bool ObjectType::keyIsIdentifier(const std::string& k)
 {
   return true;
 }

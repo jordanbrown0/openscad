@@ -41,6 +41,7 @@
 #include "ModuleInstantiation.h"
 #include "Assignment.h"
 #include "Expression.h"
+#include "GeometryLiteral.h"
 #include "function.h"
 #include "printutils.h"
 #include "memory.h"
@@ -575,7 +576,18 @@ primary
             {
               $$ = $2;
             }
-		;
+        | '{' '{'
+            {
+              GeometryLiteral *gl = new GeometryLiteral(LOCD("literal", @$));
+              scope_stack.push(&gl->body);
+              $<expr>$ = gl;
+            }
+          inner_input '}' '}'
+            {
+              scope_stack.pop();
+              $$ = $<expr>3;
+            }
+            ;
 
 expr_or_empty
         : /* empty */

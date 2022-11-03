@@ -55,12 +55,17 @@ using namespace boost::assign; // bring 'operator+=()' into scope
 
 extern PolySet *import_amf(const std::string&, const Location& loc);
 extern Geometry *import_3mf(const std::string&, const Location& loc);
+static std::shared_ptr<AbstractNode> do_import_geometryobject(const ModuleInstantiation *inst, Arguments arguments);
 
 static std::shared_ptr<AbstractNode> do_import(const ModuleInstantiation *inst, Arguments arguments, const Children& children, ImportType type)
 {
   if (!children.empty()) {
     LOG(message_group::Warning, inst->location(), arguments.documentRoot(),
         "module %1$s() does not support child modules", inst->name());
+  }
+
+  if (arguments.size() > 0 && arguments[0]->type() == Value::Type::GEOMETRY) {
+    return (do_import_geometryobject(inst, std::move(arguments)));
   }
 
   Parameters parameters = Parameters::parse(std::move(arguments), inst->location(),
@@ -246,6 +251,17 @@ std::string ImportNode::toString() const
 std::string ImportNode::name() const
 {
   return "import";
+}
+
+static std::shared_ptr<AbstractNode>
+do_import_geometryobject(const ModuleInstantiation *inst, Arguments arguments)
+{
+  GeometryType g = arguments[0]->toGeometry();
+  return g.getNodeClone();
+}
+
+std::shared_ptr<AbstractNode> ImportNode::clone() const {
+  return std::make_shared<ImportNode>(*this);
 }
 
 void register_builtin_import()

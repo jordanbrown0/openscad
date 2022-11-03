@@ -984,6 +984,14 @@ Value builtin_is_object(Arguments arguments, const Location& loc)
   return {arguments[0]->isDefinedAs(Value::Type::OBJECT)};
 }
 
+Value builtin_is_geometry(Arguments arguments, const Location& loc)
+{
+  if (!check_arguments("is_geometry", arguments, loc, 1)) {
+    return Value::undefined.clone();
+  }
+  return Value(arguments[0]->isDefinedAs(Value::Type::GEOMETRY));
+}
+
 Value builtin_import(Arguments arguments, const Location& loc)
 {
   auto session = arguments.session();
@@ -1209,6 +1217,21 @@ void register_builtin_functions()
                                                   &Feature::ExperimentalTextMetricsFunctions),
   {
     "is_object(arg) -> boolean",
+  });
+
+  Builtins::init("object", new BuiltinFunction(&builtin_object, &Feature::ExperimentalObjectFunction),
+  {
+    "object([ object, ] [ key-val list, ] key=value, ...) -> object",
+  });
+
+  Builtins::init("has_key", new BuiltinFunction(&builtin_has_key, &Feature::ExperimentalObjectFunction),
+  {
+    "has_key(object, key) -> boolean",
+  });
+
+  Builtins::init("is_geometry", new BuiltinFunction(&builtin_is_geometry),
+  {
+    "is_geometry(arg) -> boolean",
   });
 
   Builtins::init("import", new BuiltinFunction(&builtin_import, &Feature::ExperimentalImportFunction),

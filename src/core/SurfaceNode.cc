@@ -84,6 +84,7 @@ public:
   SurfaceNode(const ModuleInstantiation *mi) : LeafNode(mi) { }
   std::string toString() const override;
   std::string name() const override { return "surface"; }
+  std::shared_ptr<AbstractNode> clone() const override;
 
   Filename filename;
   bool center{false};
@@ -370,6 +371,10 @@ std::string SurfaceNode::toString() const
          << ")";
 
   return stream.str();
+}
+
+std::shared_ptr<AbstractNode> SurfaceNode::clone() const {
+  return std::make_shared<SurfaceNode>(*this);
 }
 
 void register_builtin_surface()
