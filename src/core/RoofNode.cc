@@ -66,7 +66,7 @@ std::string RoofNode::toString() const
   return stream.str();
 }
 
-std::shared_ptr<AbstractNode> RoofNode::clone() const {
+std::shared_ptr<AbstractNode> RoofNode::cloneOne() const {
   return std::make_shared<RoofNode>(*this);
 }
 

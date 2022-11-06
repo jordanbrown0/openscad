@@ -71,7 +71,7 @@ std::string GroupNode::verbose_name() const
   return this->_name;
 }
 
-std::shared_ptr<AbstractNode> GroupNode::clone() const {
+std::shared_ptr<AbstractNode> GroupNode::cloneOne() const {
   return std::make_shared<GroupNode>(*this);
 }
 
@@ -80,7 +80,7 @@ std::string ListNode::name() const
   return "list";
 }
 
-std::shared_ptr<AbstractNode> ListNode::clone() const {
+std::shared_ptr<AbstractNode> ListNode::cloneOne() const {
   return std::make_shared<ListNode>(*this);
 }
 
@@ -106,7 +106,7 @@ std::string AbstractIntersectionNode::name() const
   return "intersection";
 }
 
-std::shared_ptr<AbstractNode> AbstractIntersectionNode::clone() const {
+std::shared_ptr<AbstractNode> AbstractIntersectionNode::cloneOne() const {
   return std::make_shared<AbstractIntersectionNode>(*this);
 }
 
@@ -121,12 +121,12 @@ void AbstractNode::progress_report() const
   progress_update(shared_from_this(), this->progress_mark);
 }
 
-std::shared_ptr<AbstractNode> AbstractNode::cloner() const {
-  std::shared_ptr<AbstractNode> n = this->clone();
+std::shared_ptr<AbstractNode> AbstractNode::clone() const {
+  std::shared_ptr<AbstractNode> n = this->cloneOne();
   n->children.clear();
   n->idx = idx_counter++;
   for (auto child : children) {
-    n->children.push_back(child->cloner());
+    n->children.push_back(child->clone());
   }
   return n;
 }

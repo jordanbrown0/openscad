@@ -73,8 +73,8 @@ void Value::GeometryType::print(std::ostream& stream) const {
   stream << t.getString(*node, "");
 }
 
-std::shared_ptr<AbstractNode> Value::GeometryType::getNodeClone() const {
-  return node->cloner();
+std::shared_ptr<AbstractNode> Value::GeometryType::getNode() const {
+  return node;
 }
 
 std::ostream& operator<<(std::ostream& stream, const GeometryType& g)

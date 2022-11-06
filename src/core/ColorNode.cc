@@ -281,7 +281,7 @@ std::string ColorNode::name() const
   return "color";
 }
 
-std::shared_ptr<AbstractNode> ColorNode::clone() const {
+std::shared_ptr<AbstractNode> ColorNode::cloneOne() const {
   return std::make_shared<ColorNode>(*this);
 }
 

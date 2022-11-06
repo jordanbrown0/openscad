@@ -83,7 +83,7 @@ std::string OffsetNode::toString() const
   return stream.str();
 }
 
-std::shared_ptr<AbstractNode> OffsetNode::clone() const {
+std::shared_ptr<AbstractNode> OffsetNode::cloneOne() const {
   return std::make_shared<OffsetNode>(*this);
 }
 

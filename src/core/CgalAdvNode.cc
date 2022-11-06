@@ -140,7 +140,7 @@ std::string CgalAdvNode::toString() const
   return stream.str();
 }
 
-std::shared_ptr<AbstractNode> CgalAdvNode::clone() const {
+std::shared_ptr<AbstractNode> CgalAdvNode::cloneOne() const {
   return std::make_shared<CgalAdvNode>(*this);
 }
 

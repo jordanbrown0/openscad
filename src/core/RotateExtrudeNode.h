@@ -15,7 +15,7 @@ public:
   }
   std::string toString() const override;
   std::string name() const override { return "rotate_extrude"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
 
   int convexity;
   double fn, fs, fa;

@@ -75,7 +75,7 @@ std::string CsgOpNode::name() const
   return "internal_error";
 }
 
-std::shared_ptr<AbstractNode> CsgOpNode::clone() const {
+std::shared_ptr<AbstractNode> CsgOpNode::cloneOne() const {
   return std::make_shared<CsgOpNode>(*this);
 }
 

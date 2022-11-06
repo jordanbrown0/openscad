@@ -54,7 +54,7 @@ std::string ProjectionNode::toString() const
                                  ", convexity = ", this->convexity, ")");
 }
 
-std::shared_ptr<AbstractNode> ProjectionNode::clone() const {
+std::shared_ptr<AbstractNode> ProjectionNode::cloneOne() const {
   return std::make_shared<ProjectionNode>(*this);
 }
 

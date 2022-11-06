@@ -52,7 +52,7 @@ std::string RenderNode::toString() const
   return STR(this->name(), "(convexity = ", convexity, ")");
 }
 
-std::shared_ptr<AbstractNode> RenderNode::clone() const {
+std::shared_ptr<AbstractNode> RenderNode::cloneOne() const {
   return std::make_shared<RenderNode>(*this);
 }
 

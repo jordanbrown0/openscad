@@ -558,7 +558,7 @@ public:
     Value operator<=(const GeometryType& v) const;
     Value operator>=(const GeometryType& v) const;
     void print(std::ostream& stream) const;
-    std::shared_ptr<AbstractNode> getNodeClone() const;
+    std::shared_ptr<AbstractNode> getNode() const;
   };
 
   class ObjectType

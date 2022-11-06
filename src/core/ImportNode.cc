@@ -257,10 +257,10 @@ static std::shared_ptr<AbstractNode>
 do_import_geometryobject(const ModuleInstantiation *inst, Arguments arguments)
 {
   GeometryType g = arguments[0]->toGeometry();
-  return g.getNodeClone();
+  return g.getNode()->clone();
 }
 
-std::shared_ptr<AbstractNode> ImportNode::clone() const {
+std::shared_ptr<AbstractNode> ImportNode::cloneOne() const {
   return std::make_shared<ImportNode>(*this);
 }
 

@@ -259,7 +259,7 @@ std::string TransformNode::verbose_name() const
   return _name;
 }
 
-std::shared_ptr<AbstractNode> TransformNode::clone() const {
+std::shared_ptr<AbstractNode> TransformNode::cloneOne() const {
   return std::make_shared<TransformNode>(*this);
 }
 

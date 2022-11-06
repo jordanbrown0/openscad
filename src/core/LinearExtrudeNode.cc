@@ -179,7 +179,7 @@ std::string LinearExtrudeNode::toString() const
   return stream.str();
 }
 
-std::shared_ptr<AbstractNode> LinearExtrudeNode::clone() const {
+std::shared_ptr<AbstractNode> LinearExtrudeNode::cloneOne() const {
   return std::make_shared<LinearExtrudeNode>(*this);
 }
 

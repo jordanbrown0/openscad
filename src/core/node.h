@@ -66,8 +66,8 @@ public:
   int idx; // Node index (unique per tree)
 
   std::shared_ptr<const AbstractNode> getNodeByID(int idx, std::deque<std::shared_ptr<const AbstractNode>>& path) const;
-  virtual std::shared_ptr<AbstractNode> clone() const = 0;
-  std::shared_ptr<AbstractNode> cloner() const;
+  virtual std::shared_ptr<AbstractNode> cloneOne() const = 0;
+  std::shared_ptr<AbstractNode> clone() const;
 };
 
 class AbstractIntersectionNode : public AbstractNode
@@ -77,7 +77,7 @@ public:
   AbstractIntersectionNode(const ModuleInstantiation *mi) : AbstractNode(mi) { }
   std::string toString() const override;
   std::string name() const override;
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
 };
 
 class AbstractPolyNode : public AbstractNode
@@ -102,7 +102,7 @@ public:
   VISITABLE();
   ListNode(const ModuleInstantiation *mi) : AbstractNode(mi) { }
   std::string name() const override;
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
 };
 
 /*!
@@ -116,7 +116,7 @@ public:
   GroupNode(const ModuleInstantiation *mi, std::string name = "") : AbstractNode(mi), _name(std::move(name)) { }
   std::string name() const override;
   std::string verbose_name() const override;
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
 private:
   const std::string _name;
 };

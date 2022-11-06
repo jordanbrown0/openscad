@@ -112,7 +112,7 @@ std::string RotateExtrudeNode::toString() const
   return stream.str();
 }
 
-std::shared_ptr<AbstractNode> RotateExtrudeNode::clone() const {
+std::shared_ptr<AbstractNode> RotateExtrudeNode::cloneOne() const {
   return std::make_shared<RotateExtrudeNode>(*this);
 }
 

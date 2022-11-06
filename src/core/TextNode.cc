@@ -77,7 +77,7 @@ std::string TextNode::toString() const
   return STR(name(), "(", this->params, ")");
 }
 
-std::shared_ptr<AbstractNode> TextNode::clone() const {
+std::shared_ptr<AbstractNode> TextNode::cloneOne() const {
   return std::make_shared<TextNode>(*this);
 }
 

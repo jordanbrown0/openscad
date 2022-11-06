@@ -126,7 +126,7 @@ public:
     return stream.str();
   }
   std::string name() const override { return "cube"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
   const Geometry *createGeometry() const override;
 
   double x = 1, y = 1, z = 1;
@@ -198,7 +198,7 @@ const Geometry *CubeNode::createGeometry() const
   return p;
 }
 
-std::shared_ptr<AbstractNode> CubeNode::clone() const {
+std::shared_ptr<AbstractNode> CubeNode::cloneOne() const {
   return std::make_shared<CubeNode>(*this);
 }
 
@@ -255,7 +255,7 @@ public:
     return stream.str();
   }
   std::string name() const override { return "sphere"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
   const Geometry *createGeometry() const override;
 
   double fn, fs, fa;
@@ -334,7 +334,7 @@ sphere_next_r2:
   return p;
 }
 
-std::shared_ptr<AbstractNode> SphereNode::clone() const {
+std::shared_ptr<AbstractNode> SphereNode::cloneOne() const {
   return std::make_shared<SphereNode>(*this);
 }
 
@@ -383,7 +383,7 @@ public:
     return stream.str();
   }
   std::string name() const override { return "cylinder"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
   const Geometry *createGeometry() const override;
 
   double fn, fs, fa;
@@ -459,7 +459,7 @@ const Geometry *CylinderNode::createGeometry() const
   return p;
 }
 
-std::shared_ptr<AbstractNode> CylinderNode::clone() const {
+std::shared_ptr<AbstractNode> CylinderNode::cloneOne() const {
   return std::make_shared<CylinderNode>(*this);
 }
 
@@ -526,7 +526,7 @@ public:
   PolyhedronNode (const ModuleInstantiation *mi) : LeafNode(mi) {}
   std::string toString() const override;
   std::string name() const override { return "polyhedron"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
   const Geometry *createGeometry() const override;
 
   std::vector<point3d> points;
@@ -586,7 +586,7 @@ const Geometry *PolyhedronNode::createGeometry() const
   return p;
 }
 
-std::shared_ptr<AbstractNode> PolyhedronNode::clone() const {
+std::shared_ptr<AbstractNode> PolyhedronNode::cloneOne() const {
   return std::make_shared<PolyhedronNode>(*this);
 }
 
@@ -678,7 +678,7 @@ public:
     return stream.str();
   }
   std::string name() const override { return "square"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
   const Geometry *createGeometry() const override;
 
   double x = 1, y = 1;
@@ -709,7 +709,7 @@ const Geometry *SquareNode::createGeometry() const
   return p;
 }
 
-std::shared_ptr<AbstractNode> SquareNode::clone() const {
+std::shared_ptr<AbstractNode> SquareNode::cloneOne() const {
   return std::make_shared<SquareNode>(*this);
 }
 
@@ -767,7 +767,7 @@ public:
     return stream.str();
   }
   std::string name() const override { return "circle"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
   const Geometry *createGeometry() const override;
 
   double fn, fs, fa;
@@ -793,7 +793,7 @@ const Geometry *CircleNode::createGeometry() const
   return p;
 }
 
-std::shared_ptr<AbstractNode> CircleNode::clone() const {
+std::shared_ptr<AbstractNode> CircleNode::cloneOne() const {
   return std::make_shared<CircleNode>(*this);
 }
 
@@ -829,7 +829,7 @@ public:
   PolygonNode (const ModuleInstantiation *mi) : LeafNode(mi) {}
   std::string toString() const override;
   std::string name() const override { return "polygon"; }
-  std::shared_ptr<AbstractNode> clone() const override;
+  std::shared_ptr<AbstractNode> cloneOne() const override;
   const Geometry *createGeometry() const override;
 
   std::vector<point2d> points;
@@ -906,7 +906,7 @@ const Geometry *PolygonNode::createGeometry() const
   return p;
 }
 
-std::shared_ptr<AbstractNode> PolygonNode::clone() const {
+std::shared_ptr<AbstractNode> PolygonNode::cloneOne() const {
   return std::make_shared<PolygonNode>(*this);
 }
 
