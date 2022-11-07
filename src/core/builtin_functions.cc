@@ -1148,6 +1148,8 @@ Value builtin_data_render(Arguments arguments, const Location& loc)
   info.set("center", std::move(bounding_box_center));
   info.set("size", std::move(bounding_box_size));
 
+  VectorType objects(arguments.session());
+
   // Following would theoretically be repeated for each sub-object,
   // e.g. each color, each material.
   VectorType points(arguments.session());
@@ -1165,7 +1167,6 @@ Value builtin_data_render(Arguments arguments, const Location& loc)
   // obj1.set("color", ...);
   // obj1.set("material", ...);
 
-  VectorType objects(arguments.session());
   objects.emplace_back(std::move(obj1));
   // End of sub-object stuff
 
