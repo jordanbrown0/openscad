@@ -1013,92 +1013,93 @@ Value builtin_import(Arguments arguments, const Location& loc)
 
 static void get_mesh_data(const CGAL_Nef_polyhedron &root_N, EvaluationSession* session, VectorType& vertices_out, VectorType& indices_out)
 {
-	if (!root_N.p3->is_simple()) {
-		LOG(message_group::Warning,Location::NONE,"","Acquiring mesh data failed, the object isn't a valid 2-manifold.");
-		return;
-	}
-	try {
-		CGAL_Polyhedron P;
-		root_N.p3->convert_to_polyhedron(P);
+  if (!root_N.p3->is_simple()) {
+    LOG(message_group::Warning,Location::NONE,"","Acquiring mesh data failed, the object isn't a valid 2-manifold.");
+    return;
+  }
+  try {
+    CGAL_Polyhedron P;
+    root_N.p3->convert_to_polyhedron(P);
 
-		typedef CGAL_Polyhedron::Point_iterator PCI;
-		typedef CGAL_Polyhedron::Facet_iterator FCI;
-		typedef CGAL_Polyhedron::Halfedge_around_facet_circulator HFCC;
+    typedef CGAL_Polyhedron::Point_iterator PCI;
+    typedef CGAL_Polyhedron::Facet_iterator FCI;
+    typedef CGAL_Polyhedron::Halfedge_around_facet_circulator HFCC;
 
-		for (PCI pi = P.points_begin(); pi != P.points_end(); ++pi) {
-			VectorType pc(session,
-										CGAL::to_double(pi->x()),
-										CGAL::to_double(pi->y()),
-										CGAL::to_double(pi->z()));
-			vertices_out.emplace_back(std::move(pc));
-		}
-
-		for (  FCI i = P.facets_begin(); i != P.facets_end(); ++i) {
-        HFCC j = i->facet_begin();
-        CGAL_assertion( CGAL::circulator_size(j) >= 3);
-				VectorType facet(session);
-        do {
-						double idx = std::distance(P.vertices_begin(), j->vertex());
-						facet.emplace_back(idx);
-        } while ( ++j != i->facet_begin());
-        indices_out.emplace_back(std::move(facet));
+    for (PCI pi = P.points_begin(); pi != P.points_end(); ++pi) {
+      VectorType pc(session,
+        CGAL::to_double(pi->x()),
+        CGAL::to_double(pi->y()),
+        CGAL::to_double(pi->z()));
+      vertices_out.emplace_back(std::move(pc));
     }
 
-	} catch (CGAL::Assertion_exception& e) {
-		LOG(message_group::Error,Location::NONE,"","CGAL error in CGAL_Nef_polyhedron3::convert_to_polyhedron(): %1$s",e.what());
-	}
+    for (FCI i = P.facets_begin(); i != P.facets_end(); ++i) {
+      HFCC j = i->facet_begin();
+      CGAL_assertion(CGAL::circulator_size(j) >= 3);
+      VectorType facet(session);
+      do {
+        double idx = std::distance(P.vertices_begin(), j->vertex());
+        facet.emplace_back(idx);
+      } while ( ++j != i->facet_begin());
+      indices_out.emplace_back(std::move(facet));
+    }
+
+  } catch (CGAL::Assertion_exception& e) {
+    LOG(message_group::Error,Location::NONE,"","CGAL error in CGAL_Nef_polyhedron3::convert_to_polyhedron(): %1$s",e.what());
+  }
 }
 #endif
 
 static void get_mesh_data(const shared_ptr<const Geometry> &geom, EvaluationSession* session, VectorType& points, VectorType& faces, VectorType& paths)
 {
-	if (const auto geomlist = dynamic_pointer_cast<const GeometryList>(geom)) {
-		for(const auto &item : geomlist->getChildren()) {
-			get_mesh_data(item.second, session, points, faces,	paths);
-		}
-	}
+  if (const auto geomlist = dynamic_pointer_cast<const GeometryList>(geom)) {
+    for(const auto &item : geomlist->getChildren()) {
+      get_mesh_data(item.second, session, points, faces,  paths);
+    }
+  }
 
 #ifdef ENABLE_CGAL
 
-	if (const auto N = dynamic_pointer_cast<const CGAL_Nef_polyhedron>(geom)) {
-		if (!N->isEmpty()) get_mesh_data(*N, session, points, faces);
-	} else
+  if (const auto N = dynamic_pointer_cast<const CGAL_Nef_polyhedron>(geom)) {
+    if (!N->isEmpty())
+      get_mesh_data(*N, session, points, faces);
+  } else
 
 #endif
 
-	if (const auto ps = dynamic_pointer_cast<const PolySet>(geom)) {
-		Reindexer<Vector3d> reindexer;
-		for(const auto &p : ps->polygons)	{
-			VectorType polygon_indices(session);
+  if (const auto ps = dynamic_pointer_cast<const PolySet>(geom)) {
+    Reindexer<Vector3d> reindexer;
+    for(const auto &p : ps->polygons)  {
+      VectorType polygon_indices(session);
       for (auto i = p.rbegin(); i != p.rend(); i++) {
         const auto &v = *i;
-				int point_idx = reindexer.lookup(v);
-				if(point_idx == points.size()) {
-					VectorType vc(session, v.x(), v.y(), v.z());
-					points.emplace_back(std::move(vc));
-				}
+        int point_idx = reindexer.lookup(v);
+        if(point_idx == points.size()) {
+          VectorType vc(session, v.x(), v.y(), v.z());
+          points.emplace_back(std::move(vc));
+        }
         polygon_indices.emplace_back((double)point_idx);
-			}
-			faces.emplace_back(std::move(polygon_indices));
-		}
-	}
-	else if (const auto N = dynamic_pointer_cast<const Polygon2d>(geom)) {
-		for(const auto &o : N->outlines()) {
-			VectorType polygon_indices(session);
-			for(const auto &v : o.vertices) {
-				VectorType vc(session);
-				double x = v.x();
-				double y = v.y();
-				vc.emplace_back(x);
-				vc.emplace_back(y);
-				polygon_indices.emplace_back((double)points.size());
-				points.emplace_back(std::move(vc));
-			}
-			paths.emplace_back(std::move(polygon_indices));
-		}
-	} else {
-		assert(false && "Not implemented");
-	}
+      }
+      faces.emplace_back(std::move(polygon_indices));
+    }
+  }
+  else if (const auto N = dynamic_pointer_cast<const Polygon2d>(geom)) {
+    for(const auto &o : N->outlines()) {
+      VectorType polygon_indices(session);
+      for(const auto &v : o.vertices) {
+        VectorType vc(session);
+        double x = v.x();
+        double y = v.y();
+        vc.emplace_back(x);
+        vc.emplace_back(y);
+        polygon_indices.emplace_back((double)points.size());
+        points.emplace_back(std::move(vc));
+      }
+      paths.emplace_back(std::move(polygon_indices));
+    }
+  } else {
+    assert(false && "Not implemented");
+  }
 }
 
 Value builtin_data_render(Arguments arguments, const Location& loc)
