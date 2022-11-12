@@ -575,6 +575,7 @@ private:
 public:
     shared_ptr<ObjectObject> ptr;
     ObjectType(class EvaluationSession *session);
+    ObjectType(class EvaluationSession *session, std::shared_ptr<AbstractNode> node);
     [[nodiscard]] ObjectType clone() const;
     [[nodiscard]] const Value& get(const std::string& key) const;
     void set(const std::string& key, Value&& value);
@@ -688,11 +689,11 @@ private:
 
 // The object type which ObjectType's shared_ptr points to.
 struct Value::ObjectType::ObjectObject {
-  using obj_t = std::unordered_map<std::string, Value>;
-  obj_t map;
+  std::unordered_map<std::string, Value> map;
   class EvaluationSession *evaluation_session = nullptr;
   std::vector<std::string> keys;
   std::vector<Value> values;
+  std::shared_ptr<AbstractNode> node = nullptr;
 };
 
 std::ostream& operator<<(std::ostream& stream, const Value::ObjectType& u);

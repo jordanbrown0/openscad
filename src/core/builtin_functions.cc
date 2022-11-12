@@ -1104,11 +1104,19 @@ static void get_mesh_data(const shared_ptr<const Geometry> &geom, EvaluationSess
 
 Value builtin_data_render(Arguments arguments, const Location& loc)
 {
-  if (!check_arguments("render", arguments, loc, { Value::Type::GEOMETRY })) {
+  shared_ptr<AbstractNode> node;
+  if (try_check_arguments(arguments, { Value::Type::OBJECT })) {
+    node = arguments[0]->toObject().ptr->node;
+    if (!node) {
+      LOG(message_group::Warning,Location::NONE,"","Object has no geometry");
+      return Value::undefined.clone();
+    }
+  } else if (check_arguments("render", arguments, loc, { Value::Type::GEOMETRY })) {
+    node = arguments[0]->toGeometry().getNode();
+  } else {
     return Value::undefined.clone();
   }
 
-  shared_ptr<AbstractNode> node = arguments[0]->toGeometry().getNode();
   Tree tree(node);
   GeometryEvaluator geomevaluator(tree);
   auto geom = shared_ptr<const Geometry>(geomevaluator.evaluateGeometry(*tree.root(), true));

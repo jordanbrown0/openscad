@@ -1374,6 +1374,14 @@ ObjectType::ObjectType(EvaluationSession *session) :
   ptr(std::make_shared<ObjectObject>())
 {
   ptr->evaluation_session = session;
+  ptr->node = nullptr;
+}
+
+ObjectType::ObjectType(EvaluationSession *session, std::shared_ptr<AbstractNode> node) :
+  ptr(shared_ptr<ObjectObject>(new ObjectObject()))
+{
+  ptr->evaluation_session = session;
+  ptr->node = node;
 }
 
 const Value& ObjectType::get(const std::string& key) const

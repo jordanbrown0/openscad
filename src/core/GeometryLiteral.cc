@@ -82,3 +82,52 @@ std::ostream& operator<<(std::ostream& stream, const GeometryType& g)
   g.print(stream);
   return stream;
 }
+
+HybridLiteral::HybridLiteral(const Location& loc) : Expression(loc)
+{
+}
+
+bool HybridLiteral::isLiteral() const {
+  return false;
+}
+
+Value HybridLiteral::evaluate(const std::shared_ptr<const Context>& defining_context) const
+{
+#if 0
+  ContextHandle<ScopeContext> context{Context::create<ScopeContext>(defining_context, &body)};
+  std::shared_ptr<AbstractNode> n =
+    this->body.instantiateModules(*context, std::make_shared<LiteralNode>());
+  return GeometryType(n);
+#elseif 0
+  ObjectType obj(defining_context->session());
+  for (const auto& e : this->children) {
+    obj.set(e.first, e.second->evaluate(context));
+  }
+  return std::move(obj);
+#else
+  ContextHandle<ScopeContext> context{Context::create<ScopeContext>(defining_context, &body)};
+  std::shared_ptr<AbstractNode> n =
+    this->body.instantiateModules(*context, std::make_shared<LiteralNode>());
+  ObjectType obj(defining_context->session(), n);
+  const ValueMap& vm = context->get_lexical_variables();
+  for (const auto& e : vm) {
+    obj.set(e.first, e.second.clone());
+  }
+  return std::move(obj);
+#endif
+}
+
+void HybridLiteral::print(std::ostream& stream, const std::string&) const
+{
+  stream << "{{...";
+#if 0
+  bool first = true;
+  for (const auto& e : this->children) {
+    if (first) first = false;
+    else stream << ", ";
+    // NEEDSWORK does not handle special characters in the key
+    stream << Value(e.first) << ":" << *e.second;
+  }
+#endif
+  stream << "}}";
+}

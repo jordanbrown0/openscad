@@ -42,6 +42,7 @@
 #include "Assignment.h"
 #include "Expression.h"
 #include "GeometryLiteral.h"
+// #include "HybridLiteral.h" NEEDSWORK next full build
 #include "function.h"
 #include "printutils.h"
 #include "memory.h"
@@ -583,6 +584,17 @@ primary
               $<expr>$ = gl;
             }
           inner_input '}' '}'
+            {
+              scope_stack.pop();
+              $$ = $<expr>3;
+            }
+        | '{' '('
+            {
+              HybridLiteral *gl = new HybridLiteral(LOCD("literal", @$));
+              scope_stack.push(&gl->body);
+              $<expr>$ = gl;
+            }
+          inner_input ')' '}'
             {
               scope_stack.pop();
               $$ = $<expr>3;

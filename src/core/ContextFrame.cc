@@ -140,6 +140,11 @@ bool ContextFrame::is_config_variable(const std::string& name)
   return name[0] == '$' && name != "$children";
 }
 
+const ValueMap& ContextFrame::get_lexical_variables() const
+{
+  return lexical_variables;
+}
+
 #ifdef DEBUG
 std::string ContextFrame::dumpFrame() const
 {
