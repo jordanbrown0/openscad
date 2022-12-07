@@ -166,7 +166,7 @@ bool fileEnded=false;
 %type <arg> argument
 %type <arg> parameter
 %type <text> module_id
-%type <expr> module_ref
+%type <expr> ref
 %type <text> reserved_but_allowed_in_module_name
 %type <text> reserved_but_allowed_in_object_key
 %type <text> object_key
@@ -194,6 +194,7 @@ statement
             {
               if ($1) scope_stack.top()->addModuleInst(shared_ptr<ModuleInstantiation>($1));
             }
+        | geometry
         | assignment
         | TOK_MODULE TOK_ID '(' parameters ')'
             {
@@ -314,6 +315,12 @@ child_statement
             {
                 if ($1) scope_stack.top()->addModuleInst(shared_ptr<ModuleInstantiation>($1));
             }
+        | geometry
+        ;
+
+geometry
+        : ref ';'
+//        | '(' expr ')' ';'
         ;
 
 // "for", "let" and "each" are valid module identifiers
@@ -330,20 +337,48 @@ module_id
         | reserved_but_allowed_in_module_name
         ;
 
-module_ref
+ref
         : module_id
             {
               $$ = new Lookup($1, LOCD("variable", @$));
               free($1);
             }
+// Allowing both (expr), an expression that evaluates to a module reference,
+// and a sequence of function calls f(a)(b)... that evaluates to a module
+// reference, yields a reduce-reduce conflict:
+// f(a)(b)(c) can be either:
+// * A module invocation f(a) with a module invocation (b)(c) as a child, where
+//   b is an expression that evaluates to a module reference, or
+// * A function invocation f(a) that returns a function reference, with argument
+//   (b), that returns a module reference with argument (c).
+//
+// It is not clear to me which interpretation is more useful - or, more
+// precisely, whether it's more useful to allow f(a)(b) as a function returning
+// a module reference, or (m)(a), where m is an expression yielding a
+// module reference.
+//
         | '(' expr ')'
             {
-              $$ = $2;
+               $$ = $2;
+            }
+//        | ref '(' arguments ')'
+//            {
+//              $$ = new FunctionCall($1, *$3, LOCD("functioncall", @$));
+//              delete $3;
+//            }
+        | ref '[' expr ']'
+            {
+              $$ = new ArrayLookup($1, $3, LOCD("index", @$));
+            }
+        | ref '.' TOK_ID
+            {
+              $$ = new MemberLookup($1, $3, LOCD("member", @$));
+              free($3);
             }
         ;
 
 single_module_instantiation
-        : module_ref '(' arguments ')'
+        : ref '(' arguments ')'
             {
                 $$ = new ModuleInstantiation($1, *$3, LOCD("modulecall", @$));
                 delete $3;
