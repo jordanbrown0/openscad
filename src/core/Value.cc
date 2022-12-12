@@ -229,6 +229,7 @@ std::string Value::typeName(Type type)
   case Type::OBJECT:    return "object";
   case Type::FUNCTION:  return "function";
   case Type::MODULE:    return "module";
+  case Type::GEOMETRY:  return "geometry";
   default: assert(false && "unknown Value variant type"); return "<unknown>";
   }
 }

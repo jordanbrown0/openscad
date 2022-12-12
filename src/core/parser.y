@@ -199,9 +199,8 @@ statement
         | TOK_MODULE TOK_ID '(' parameters ')'
             {
               UserModule *newmodule = new UserModule($2, LOCD("module", @$), *$4);
-              auto top = scope_stack.top();
+              scope_stack.top()->addModule(shared_ptr<UserModule>(newmodule));
               scope_stack.push(&newmodule->body);
-              top->addModule(shared_ptr<UserModule>(newmodule));
               free($2);
               delete $4;
             }
@@ -318,9 +317,17 @@ child_statement
         | geometry
         ;
 
+// Maybe geometry should *only* be allowed to be "(expr);".  That would make it
+// totally general - not a subset expression - and would make it kind of
+// visually distinctive.
 geometry
         : ref ';'
-//        | '(' expr ')' ';'
+            {
+              auto gi = new GeometryInstantiation(
+                std::shared_ptr<Expression>($1), LOCD("geometry", @$));
+              scope_stack.top()->addModuleInst(
+                shared_ptr<ModuleInstantiation>(gi));
+            }
         ;
 
 // "for", "let" and "each" are valid module identifiers
@@ -401,7 +408,6 @@ expr
 
             UserModule *newmodule = new UserModule("", LOCD("anonmodule", @$), *$3);
             $<expr>$ = new ModuleDefinition(newmodule, LOCD("anonmodule", @$));
-            auto top = scope_stack.top();
             scope_stack.push(&newmodule->body);
             delete $3;
           }

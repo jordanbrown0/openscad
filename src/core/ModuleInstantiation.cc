@@ -8,6 +8,11 @@
 ModuleInstantiation::ModuleInstantiation(const std::string& name, const AssignmentList& args, const Location& loc)
    : ASTNode(loc), arguments(args), tag_root(false), tag_highlight(false), tag_background(false), modname(name), isLookup(true) { }
 
+/* Subclass must supply the meat. */
+ModuleInstantiation::ModuleInstantiation(const Location& loc) : ASTNode(loc)
+{
+}
+
 ModuleInstantiation::ModuleInstantiation(Expression *ref_expr, const AssignmentList& args , const Location& loc)
     : ASTNode(loc), arguments(args), tag_root(false), tag_highlight(false), tag_background(false), ref_expr(ref_expr)
 {

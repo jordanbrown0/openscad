@@ -3,6 +3,7 @@
 #include "Expression.h"
 #include "Context.h"
 #include "ScopeContext.h"
+#include "Parameters.h"
 #include "Value.h"
 #include "node.h"
 #include "Tree.h"
@@ -130,4 +131,45 @@ void HybridLiteral::print(std::ostream& stream, const std::string&) const
   }
 #endif
   stream << "}}";
+}
+
+GeometryInstantiation::GeometryInstantiation(shared_ptr<class Expression> expr, const Location& loc) : ModuleInstantiation(loc) {
+  this->expr = expr;
+}
+
+GeometryInstantiation::~GeometryInstantiation()
+{
+}
+
+std::shared_ptr<AbstractNode>
+GeometryInstantiation::evaluate(
+  const std::shared_ptr<const Context> context) const
+{
+  Value v = expr->evaluate(context);
+  switch (v.type()) {
+  case Value::Type::GEOMETRY:
+    return v.toGeometry().getNode()->clone();
+  case Value::Type::OBJECT:
+    {
+      shared_ptr<AbstractNode> n = v.toObject().ptr->node;
+      if (!n) {
+        return std::make_shared<GroupNode>(this);
+      }
+      return n->clone();
+    }
+  default:
+    print_argConvert_warning("geometry", "value", v, {Value::Type::GEOMETRY}, loc, "???");
+    return nullptr;
+  }
+}
+
+void
+GeometryInstantiation::print(
+  std::ostream& stream,
+  const std::string& indent,
+  const bool inlined) const
+{
+  stream << "(";
+  expr->print(stream, indent);
+  stream << ");\n";
 }
