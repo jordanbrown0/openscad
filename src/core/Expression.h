@@ -157,7 +157,8 @@ public:
   void set(const char *, Expression *expr);
   bool isLiteral() const override;
 private:
-  std::unordered_map<std::string, shared_ptr<Expression>> children;
+  std::vector<std::string> keys;
+  std::vector<shared_ptr<Expression>> values;
   mutable boost::tribool literal_flag; // cache if already computed
 };
 

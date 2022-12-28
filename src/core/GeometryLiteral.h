@@ -1,3 +1,7 @@
+// Several types associated with geometry-as-data.
+// NEEDSWORK Should perhaps be split into GeometryLiteral.h, HybridLiteral.h,
+// and GeometryInstantiation.h.  (Or maybe GeometryInstantiation should
+// go in ModuleInstantiation.h.)
 #pragma once
 
 #include "Expression.h"

@@ -1,3 +1,7 @@
+// Several types associated with geometry-as-data.
+// NEEDSWORK Should perhaps be split into GeometryLiteral.cc, HybridLiteral.cc,
+// and GeometryInstantiation.cc.  (Or maybe GeometryInstantiation should
+// go in ModuleInstantiation.cc.)
 #include "GeometryLiteral.h"
 #include "AST.h"
 #include "Expression.h"
@@ -97,6 +101,8 @@ Value HybridLiteral::evaluate(const std::shared_ptr<const Context>& defining_con
   std::shared_ptr<AbstractNode> n =
     this->body.instantiateModules(*context, std::make_shared<LiteralNode>());
   ObjectType obj(defining_context->session(), n);
+  // NEEDSWORK: it would be nice if this was order-preserving, but
+  // the lexical_variables list is not.
   const ValueMap& vm = context->get_lexical_variables();
   for (const auto& e : vm) {
     obj.set(e.first, e.second.clone());

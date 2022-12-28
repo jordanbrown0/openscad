@@ -339,8 +339,8 @@ Object::Object(const Location& loc) : Expression(loc), literal_flag(unknown)
 
 bool Object::isLiteral() const {
   if (unknown(literal_flag)) {
-    for (const auto& e : this->children) {
-      if (!e.second->isLiteral()) {
+    for (const auto& v : this->values) {
+      if (!v->isLiteral()) {
         literal_flag = false;
         return false;
       }
@@ -354,27 +354,29 @@ bool Object::isLiteral() const {
 
 void Object::set(const char *key, Expression *expr)
 {
-  this->children.emplace(key, expr);
+  this->keys.emplace_back(key);
+  this->values.emplace_back(expr);
 }
 
 Value Object::evaluate(const std::shared_ptr<const Context>& context) const
 {
   ObjectType obj(context->session());
-  for (const auto& e : this->children) {
-    obj.set(e.first, e.second->evaluate(context));
+  for (size_t i = 0; i < this->keys.size(); i++) {
+    obj.set(this->keys[i], this->values[i]->evaluate(context));
   }
   return std::move(obj);
 }
 
+// This is used to print an object literal in the AST.
 void Object::print(std::ostream& stream, const std::string&) const
 {
   stream << "{";
   bool first = true;
-  for (const auto& e : this->children) {
+  for (size_t i = 0; i < this->keys.size(); i++) {
     if (first) first = false;
     else stream << ", ";
     // NEEDSWORK does not handle special characters in the key
-    stream << Value(e.first) << ":" << *e.second;
+    stream << Value(this->keys[i]) << ":" << *this->values[i];
   }
   stream << "}";
 }

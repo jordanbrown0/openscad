@@ -1398,7 +1398,6 @@ void ObjectType::set(const std::string& key, Value&& value)
   if (ptr->map.find(key) == ptr->map.end()) {
     ptr->map.emplace(key, value.clone());
     ptr->keys.emplace_back(key);
-    // NEEDSWORK CRITICAL use-after-move
     ptr->values.emplace_back(std::move(value));
   } else {
     ptr->map.erase(key);
@@ -1459,14 +1458,15 @@ bool ObjectType::keyIsIdentifier(const std::string& k)
   return true;
 }
 
+// This is used for echo() and str().
 std::ostream& operator<<(std::ostream& stream, const ObjectType& v)
 {
-  std::string comma = "";
-  stream << "{ ";
+  std::string sep = " ";
+  stream << "{";
   auto iter = v.ptr->keys.begin();
   if (iter != v.ptr->keys.end()) {
     for (; iter != v.ptr->keys.end(); ++iter) {
-      stream << comma;
+      stream << sep;
       str_utf8_wrapper k(*iter);
       if (ObjectType::keyIsIdentifier(k.toString())) {
         stream << *iter;
@@ -1474,9 +1474,9 @@ std::ostream& operator<<(std::ostream& stream, const ObjectType& v)
         stream << QuotedString(k.toString());
       }
       stream << " : " << v[k];
-      comma = ", ";
+      sep = ", ";
     }
   }
-  stream << "}";
+  stream << " }";
   return stream;
 }

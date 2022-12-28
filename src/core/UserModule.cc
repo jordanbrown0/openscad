@@ -105,6 +105,7 @@ std::shared_ptr<AbstractNode> UserModule::instantiate(const std::shared_ptr<cons
   return ret;
 }
 
+// Used for both AST dumps and echo()/str().
 void UserModule::print(std::ostream& stream, const std::string& indent) const
 {
   std::string tab = "\t";
