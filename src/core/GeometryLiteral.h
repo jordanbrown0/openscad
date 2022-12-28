@@ -37,7 +37,7 @@ class GeometryInstantiation : public ModuleInstantiation
 {
 public:
   GeometryInstantiation(shared_ptr<class Expression> expr, const Location& loc);
-  std::shared_ptr<AbstractNode> evaluate(const std::shared_ptr<const Context> context) const final;
+  virtual std::shared_ptr<AbstractNode> evaluate(const std::shared_ptr<const Context>& context) const override final;
   ~GeometryInstantiation();
   void print(std::ostream& stream, const std::string& indent, const bool inlined) const final;
 

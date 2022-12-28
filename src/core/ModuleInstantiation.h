@@ -2,6 +2,7 @@
 
 #include "AST.h"
 #include "LocalScope.h"
+#include "module.h"
 #include <utility>
 #include <vector>
 
@@ -10,8 +11,7 @@ using ModuleInstantiationList = std::vector<class ModuleInstantiation *>;
 class ModuleInstantiation : public ASTNode
 {
 public:
-  ModuleInstantiation(std::string name, AssignmentList args = AssignmentList(), const Location& loc = Location::NONE)
-    : ASTNode(loc), arguments(std::move(args)), modname(std::move(name)) { }
+  ModuleInstantiation(std::string name, AssignmentList args = AssignmentList(), const Location& loc = Location::NONE);
   ModuleInstantiation(Expression *ref_expr, AssignmentList args = AssignmentList(), const Location& loc = Location::NONE);
 
   virtual void print(std::ostream& stream, const std::string& indent, const bool inlined) const;

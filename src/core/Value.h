@@ -158,6 +158,7 @@ private:
 };
 std::ostream& operator<<(std::ostream& stream, const RangeType& r);
 
+
 template <typename T>
 class ValuePtr
 {
@@ -622,7 +623,6 @@ public:
   [[nodiscard]] bool isUncheckedUndef() const;
 
   // Conversion to std::variant "BoundedType"s. const ref where appropriate.
-<<<<<<< HEAD
   [[nodiscard]] bool toBool() const;
   [[nodiscard]] double toDouble() const;
   [[nodiscard]] const str_utf8_wrapper& toStrUtf8Wrapper() const;

@@ -3,9 +3,6 @@
 #include "Expression.h"
 #include "SourceFile.h"
 #include "ParameterObject.h"
-#include "Expression.h"
-#include "Assignment.h"
-#include "SourceFile.h"
 
 #include <sstream>
 #include <boost/algorithm/string.hpp>

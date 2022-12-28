@@ -5,16 +5,18 @@
 #include "exceptions.h"
 #include "printutils.h"
 
-ModuleInstantiation::ModuleInstantiation(const std::string& name, const AssignmentList& args, const Location& loc)
-   : ASTNode(loc), arguments(args), tag_root(false), tag_highlight(false), tag_background(false), modname(name), isLookup(true) { }
-
-/* Subclass must supply the meat. */
-ModuleInstantiation::ModuleInstantiation(const Location& loc) : ASTNode(loc), tag_root(false), tag_highlight(false), tag_background(false)
+ModuleInstantiation::ModuleInstantiation(const std::string name, const AssignmentList args, const Location& loc)
+   : ASTNode(loc), arguments(std::move(args)), modname(std::move(name)), isLookup(true)
 {
 }
 
-ModuleInstantiation::ModuleInstantiation(Expression *ref_expr, const AssignmentList& args , const Location& loc)
-    : ASTNode(loc), arguments(args), tag_root(false), tag_highlight(false), tag_background(false), ref_expr(ref_expr)
+/* Subclass must supply the meat. */
+ModuleInstantiation::ModuleInstantiation(const Location& loc) : ASTNode(loc)
+{
+}
+
+ModuleInstantiation::ModuleInstantiation(Expression *ref_expr, const AssignmentList args, const Location& loc)
+    : ASTNode(loc), arguments(args), ref_expr(ref_expr)
 {
   if (typeid(*ref_expr) == typeid(Lookup)) {
     isLookup = true;
@@ -28,14 +30,6 @@ ModuleInstantiation::ModuleInstantiation(Expression *ref_expr, const AssignmentL
     s << ")";
     modname = s.str();
   }
-}
-
-ModuleInstantiation::~ModuleInstantiation()
-{
-}
-
-IfElseModuleInstantiation::~IfElseModuleInstantiation()
-{
 }
 
 void ModuleInstantiation::print(std::ostream& stream, const std::string& indent, const bool inlined) const

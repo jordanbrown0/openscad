@@ -30,7 +30,6 @@ class UserModule : public AbstractModule, public ASTNode
 public:
   UserModule(const char *name, const Location& loc, AssignmentList& parameters) :
     ASTNode(loc), name(name), parameters(parameters) { }
-  ~UserModule() {}
 
   std::shared_ptr<AbstractNode> instantiate(const std::shared_ptr<const Context>& defining_context, const ModuleInstantiation *inst, const std::shared_ptr<const Context>& context) const override;
   virtual void print(std::ostream& stream, const std::string& indent) const override;

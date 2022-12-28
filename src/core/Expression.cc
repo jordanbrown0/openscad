@@ -434,7 +434,6 @@ Value MemberLookup::evaluate(const std::shared_ptr<const Context>& context) cons
     break;
   case Value::Type::OBJECT:
     return v[this->member];
-  case Value::Type::MODULE:
   default:
     break;
   }

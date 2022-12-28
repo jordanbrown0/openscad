@@ -28,7 +28,6 @@
 #include "printutils.h"
 #include "openscad_adaptor.h"
 #include "openscad_interface.h"
-#include <boost-utils.h>
 
 void DBusInputDriver::run()
 {

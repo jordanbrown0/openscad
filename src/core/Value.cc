@@ -34,6 +34,8 @@
 #include <boost/lexical_cast.hpp>
 
 #include "Value.h"
+#include "node.h"
+#include "Tree.h"
 #include "Expression.h"
 #include "EvaluationSession.h"
 #include "printutils.h"
@@ -1453,30 +1455,71 @@ ObjectType ObjectType::clone() const
   return ObjectType(this->ptr);
 }
 
+// NEEDSWORK perhaps "true", "false", "undef", and maybe a couple of others
+// should be reserved for non-string keys, when they become available.
 bool ObjectType::keyIsIdentifier(const std::string& k)
 {
+  bool first = true;
+  for (auto c: k) {
+    if (!isascii(c)) {
+      return false;
+    }
+    if (first) {
+      first = false;
+      if (!isalpha(c) && c != '$' && c != '_') {
+        return false;
+      }
+    } else {
+      if (!isalnum(c) && c != '_') {
+        return false;
+      }
+    }
+  }
   return true;
 }
 
 // This is used for echo() and str().
 std::ostream& operator<<(std::ostream& stream, const ObjectType& v)
 {
-  std::string sep = " ";
-  stream << "{";
-  auto iter = v.ptr->keys.begin();
-  if (iter != v.ptr->keys.end()) {
-    for (; iter != v.ptr->keys.end(); ++iter) {
-      stream << sep;
-      str_utf8_wrapper k(*iter);
-      if (ObjectType::keyIsIdentifier(k.toString())) {
-        stream << *iter;
-      } else {
-        stream << QuotedString(k.toString());
+  if (v.ptr->node) {
+    stream << "{( ";
+    auto iter = v.ptr->keys.begin();
+    if (iter != v.ptr->keys.end()) {
+      for (; iter != v.ptr->keys.end(); ++iter) {
+        str_utf8_wrapper k(*iter);
+        if (ObjectType::keyIsIdentifier(k.toString())) {
+          stream << *iter;
+        } else {
+          stream << QuotedString(k.toString());
+        }
+        stream << " = " << v[k] << "; ";
       }
-      stream << " : " << v[k];
-      sep = ", ";
     }
+    // We skip over the top node because it's always a GroupNode and is boring;
+    // it's implied by the {{ }}.
+    for (auto child : v.ptr->node->children) {
+      Tree t(child);
+      stream << t.getString(*child, "");
+    }
+    stream << ")}";
+  } else {
+    std::string sep = " ";
+    stream << "{";
+    auto iter = v.ptr->keys.begin();
+    if (iter != v.ptr->keys.end()) {
+      for (; iter != v.ptr->keys.end(); ++iter) {
+        stream << sep;
+        str_utf8_wrapper k(*iter);
+        if (ObjectType::keyIsIdentifier(k.toString())) {
+          stream << *iter;
+        } else {
+          stream << QuotedString(k.toString());
+        }
+        stream << " : " << v[k];
+        sep = ", ";
+      }
+    }
+    stream << " }";
   }
-  stream << " }";
   return stream;
 }

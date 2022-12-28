@@ -113,9 +113,9 @@ Value HybridLiteral::evaluate(const std::shared_ptr<const Context>& defining_con
 void HybridLiteral::print(std::ostream& stream, const std::string& indent) const
 {
   std::string tab = "\t";
-  stream << "{{\n";
+  stream << "{(\n";
   body.print(stream, indent+tab);
-  stream << "}}";
+  stream << ")}";
 }
 
 GeometryInstantiation::GeometryInstantiation(shared_ptr<class Expression> expr, const Location& loc) : ModuleInstantiation(loc) {
@@ -128,7 +128,7 @@ GeometryInstantiation::~GeometryInstantiation()
 
 std::shared_ptr<AbstractNode>
 GeometryInstantiation::evaluate(
-  const std::shared_ptr<const Context> context) const
+  const std::shared_ptr<const Context>& context) const
 {
   Value v = expr->evaluate(context);
   switch (v.type()) {
@@ -142,6 +142,7 @@ GeometryInstantiation::evaluate(
     {
       shared_ptr<AbstractNode> n = v.toObject().ptr->node;
       if (!n) {
+        // NEEDSWORK should this be nullptr?
         return std::make_shared<GroupNode>(this);
       }
       n = n->clone();
