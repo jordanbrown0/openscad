@@ -56,6 +56,9 @@ public:
   // FIXME: Make protected
   std::vector<std::shared_ptr<AbstractNode>> children;
   const ModuleInstantiation *modinst;
+  void setModuleInstantiation(const ModuleInstantiation *modinst) {
+    this->modinst = modinst;
+  }
 
   // progress_mark is a running number used for progress indication
   // FIXME: Make all progress handling external, put it in the traverser class?
@@ -134,8 +137,9 @@ private:
   ModuleInstantiation mi;
 };
 
-// Top of a geometry literal.  Should perhaps be an instance of RootNode
-// instead, since it's kind of a root node.
+/*!
+  Top of a geometry value.
+ */
 class LiteralNode : public GroupNode
 {
 public:

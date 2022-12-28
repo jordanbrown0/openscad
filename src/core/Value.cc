@@ -1398,6 +1398,7 @@ void ObjectType::set(const std::string& key, Value&& value)
   if (ptr->map.find(key) == ptr->map.end()) {
     ptr->map.emplace(key, value.clone());
     ptr->keys.emplace_back(key);
+    // NEEDSWORK CRITICAL use-after-move
     ptr->values.emplace_back(std::move(value));
   } else {
     ptr->map.erase(key);

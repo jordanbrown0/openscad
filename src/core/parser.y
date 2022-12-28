@@ -157,6 +157,7 @@ bool fileEnded=false;
 %type <ifelse> if_statement
 %type <ifelse> ifelse_statement
 %type <inst> single_module_instantiation
+%type <inst> geometry
 
 %type <args> arguments
 %type <args> argument_list
@@ -194,7 +195,6 @@ statement
             {
               if ($1) scope_stack.top()->addModuleInst(shared_ptr<ModuleInstantiation>($1));
             }
-        | geometry
         | assignment
         | TOK_MODULE TOK_ID '(' parameters ')'
             {
@@ -270,6 +270,11 @@ module_instantiation
             {
                 $$ = $1;
             }
+        | geometry
+            {
+              $<inst>$ = $1;
+            }
+
         ;
 
 ifelse_statement
@@ -314,7 +319,6 @@ child_statement
             {
                 if ($1) scope_stack.top()->addModuleInst(shared_ptr<ModuleInstantiation>($1));
             }
-        | geometry
         ;
 
 // Maybe geometry should *only* be allowed to be "(expr);".  That would make it
@@ -323,10 +327,8 @@ child_statement
 geometry
         : ref ';'
             {
-              auto gi = new GeometryInstantiation(
+              $$ = new GeometryInstantiation(
                 std::shared_ptr<Expression>($1), LOCD("geometry", @$));
-              scope_stack.top()->addModuleInst(
-                shared_ptr<ModuleInstantiation>(gi));
             }
         ;
 
@@ -344,6 +346,10 @@ module_id
         | reserved_but_allowed_in_module_name
         ;
 
+// NEEDSWORK: "ref" is *almost* the same as "call", except for the exclusion of
+// function calls, and it sure seems desirable to unify them.  However, (a) I
+// don't immediately see how to do that, and (b) it might as well wait until
+// we decide exactly what forms to allow.
 ref
         : module_id
             {

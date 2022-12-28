@@ -9,7 +9,7 @@ ModuleInstantiation::ModuleInstantiation(const std::string& name, const Assignme
    : ASTNode(loc), arguments(args), tag_root(false), tag_highlight(false), tag_background(false), modname(name), isLookup(true) { }
 
 /* Subclass must supply the meat. */
-ModuleInstantiation::ModuleInstantiation(const Location& loc) : ASTNode(loc)
+ModuleInstantiation::ModuleInstantiation(const Location& loc) : ASTNode(loc), tag_root(false), tag_highlight(false), tag_background(false)
 {
 }
 

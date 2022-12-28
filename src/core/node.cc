@@ -91,7 +91,7 @@ std::string RootNode::name() const
 
 std::string LiteralNode::name() const
 {
-  return "literal";
+  return "group";
 }
 
 std::string AbstractIntersectionNode::toString() const

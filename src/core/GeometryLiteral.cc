@@ -20,22 +20,15 @@ Value GeometryLiteral::evaluate(const std::shared_ptr<const Context>& defining_c
 {
   ContextHandle<ScopeContext> context{Context::create<ScopeContext>(defining_context, &body)};
   std::shared_ptr<AbstractNode> n =
-    this->body.instantiateModules(*context, std::make_shared<LiteralNode>());
+    body.instantiateModules(*context, std::make_shared<LiteralNode>());
   return GeometryType(n);
 }
 
-void GeometryLiteral::print(std::ostream& stream, const std::string&) const
+void GeometryLiteral::print(std::ostream& stream, const std::string& indent) const
 {
-  stream << "{{...";
-#if 0
-  bool first = true;
-  for (const auto& e : this->children) {
-    if (first) first = false;
-    else stream << ", ";
-    // NEEDSWORK does not handle special characters in the key
-    stream << Value(e.first) << ":" << *e.second;
-  }
-#endif
+  std::string tab = "\t";
+  stream << "{{\n";
+  body.print(stream, indent+tab);
   stream << "}}";
 }
 
@@ -70,8 +63,14 @@ Value Value::GeometryType::operator>=(const GeometryType& other) const {
 }
 
 void Value::GeometryType::print(std::ostream& stream) const {
-  Tree t(node);
-  stream << t.getString(*node, "");
+  stream << "{{\n";
+  // We skip over the top node because it's always a GroupNode and is boring;
+  // it's implied by the {{ }}.
+  for (auto child : node->children) {
+    Tree t(child);
+    stream << t.getString(*child, "");
+  }
+  stream << "}}";
 }
 
 std::shared_ptr<AbstractNode> Value::GeometryType::getNode() const {
@@ -94,18 +93,6 @@ bool HybridLiteral::isLiteral() const {
 
 Value HybridLiteral::evaluate(const std::shared_ptr<const Context>& defining_context) const
 {
-#if 0
-  ContextHandle<ScopeContext> context{Context::create<ScopeContext>(defining_context, &body)};
-  std::shared_ptr<AbstractNode> n =
-    this->body.instantiateModules(*context, std::make_shared<LiteralNode>());
-  return GeometryType(n);
-#elseif 0
-  ObjectType obj(defining_context->session());
-  for (const auto& e : this->children) {
-    obj.set(e.first, e.second->evaluate(context));
-  }
-  return std::move(obj);
-#else
   ContextHandle<ScopeContext> context{Context::create<ScopeContext>(defining_context, &body)};
   std::shared_ptr<AbstractNode> n =
     this->body.instantiateModules(*context, std::make_shared<LiteralNode>());
@@ -115,21 +102,13 @@ Value HybridLiteral::evaluate(const std::shared_ptr<const Context>& defining_con
     obj.set(e.first, e.second.clone());
   }
   return std::move(obj);
-#endif
 }
 
-void HybridLiteral::print(std::ostream& stream, const std::string&) const
+void HybridLiteral::print(std::ostream& stream, const std::string& indent) const
 {
-  stream << "{{...";
-#if 0
-  bool first = true;
-  for (const auto& e : this->children) {
-    if (first) first = false;
-    else stream << ", ";
-    // NEEDSWORK does not handle special characters in the key
-    stream << Value(e.first) << ":" << *e.second;
-  }
-#endif
+  std::string tab = "\t";
+  stream << "{{\n";
+  body.print(stream, indent+tab);
   stream << "}}";
 }
 
@@ -148,14 +127,20 @@ GeometryInstantiation::evaluate(
   Value v = expr->evaluate(context);
   switch (v.type()) {
   case Value::Type::GEOMETRY:
-    return v.toGeometry().getNode()->clone();
+    {
+    auto n = v.toGeometry().getNode()->clone();
+    n->setModuleInstantiation(this);
+    return n;
+    }
   case Value::Type::OBJECT:
     {
       shared_ptr<AbstractNode> n = v.toObject().ptr->node;
       if (!n) {
         return std::make_shared<GroupNode>(this);
       }
-      return n->clone();
+      n = n->clone();
+      n->setModuleInstantiation(this);
+      return n;
     }
   default:
     print_argConvert_warning("geometry", "value", v, {Value::Type::GEOMETRY}, loc, "???");
