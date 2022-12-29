@@ -191,6 +191,13 @@ Value ArrayLookup::evaluate(const std::shared_ptr<const Context>& context) const
   return this->array->evaluate(context)[this->index->evaluate(context)];
 }
 
+Value ArrayLookup::get_container(const std::shared_ptr<const Context>& context) const {
+  return this->array->evaluate(context);
+}
+Value ArrayLookup::get_value(const std::shared_ptr<const Context>& context, const Value& container) const {
+  return container[this->index->evaluate(context)];
+}
+
 void ArrayLookup::print(std::ostream& stream, const std::string&) const
 {
   stream << *array << "[" << *index << "]";
@@ -403,6 +410,10 @@ MemberLookup::MemberLookup(Expression *expr, std::string member, const Location&
 Value MemberLookup::evaluate(const std::shared_ptr<const Context>& context) const
 {
   const Value& v = this->expr->evaluate(context);
+  return get_value(context, v);
+}
+
+Value MemberLookup::get_value(const std::shared_ptr<const Context>& context, const Value& v) const {
   static const boost::regex re_swizzle_validation("^([xyzw]{1,4}|[rgba]{1,4})$");
 
   switch (v.type()) {
@@ -438,6 +449,10 @@ Value MemberLookup::evaluate(const std::shared_ptr<const Context>& context) cons
     break;
   }
   return Value::undefined.clone();
+}
+
+Value MemberLookup::get_container(const std::shared_ptr<const Context>& context) const {
+  return this->expr->evaluate(context);
 }
 
 void MemberLookup::print(std::ostream& stream, const std::string&) const
@@ -513,8 +528,11 @@ FunctionCall::FunctionCall(Expression *expr, AssignmentList args, const Location
     isLookup = true;
     const Lookup *lookup = static_cast<Lookup *>(expr);
     name = lookup->get_name();
+  } else if (typeid(*expr) == typeid(ArrayLookup)) {
+    isArrayLookup = true;
+  } else if (typeid(*expr) == typeid(MemberLookup)) {
+    isMemberLookup = true;
   } else {
-    isLookup = false;
     std::ostringstream s;
     s << "(";
     expr->print(s, "");
@@ -525,17 +543,27 @@ FunctionCall::FunctionCall(Expression *expr, AssignmentList args, const Location
 
 boost::optional<CallableFunction> FunctionCall::evaluate_function_expression(const std::shared_ptr<const Context>& context) const
 {
+  boost::optional<Value> f;
+  boost::optional<Value> container;
+
   if (isLookup) {
     return context->lookup_function(name, location());
+  } else if (isArrayLookup) {
+    auto alu = static_cast<ArrayLookup *>(&*expr);
+    container = alu->get_container(context);
+    f = alu->get_value(context, *container);
+  } else if (isMemberLookup) {
+    auto mlu = static_cast<MemberLookup *>(&*expr);
+    container = mlu->get_container(context);
+    f = mlu->get_value(context, *container);
   } else {
-    auto v = expr->evaluate(context);
-    if (v.type() == Value::Type::FUNCTION) {
-      return CallableFunction{std::move(v)};
-    } else {
-      LOG(message_group::Warning, loc, context->documentRoot(), "Can't call function on %1$s", v.typeName());
-      return boost::none;
-    }
+    f = expr->evaluate(context);
   }
+  if (f->type() != Value::Type::FUNCTION) {
+    LOG(message_group::Warning, loc, context->documentRoot(), "Can't call function on %1$s", f->typeName());
+    return boost::none;
+  }
+  return CallableFunction{std::move(*f)};
 }
 
 struct SimplifiedExpression {

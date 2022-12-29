@@ -90,6 +90,8 @@ class ArrayLookup : public Expression
 public:
   ArrayLookup(Expression *array, Expression *index, const Location& loc);
   [[nodiscard]] Value evaluate(const std::shared_ptr<const Context>& context) const override;
+  [[nodiscard]] Value get_container(const std::shared_ptr<const Context>& context) const;
+  [[nodiscard]] Value get_value(const std::shared_ptr<const Context>& context, const Value& container) const;
   void print(std::ostream& stream, const std::string& indent) const override;
 private:
   shared_ptr<Expression> array;
@@ -177,6 +179,8 @@ class MemberLookup : public Expression
 public:
   MemberLookup(Expression *expr, std::string member, const Location& loc);
   [[nodiscard]] Value evaluate(const std::shared_ptr<const Context>& context) const override;
+  [[nodiscard]] Value get_container(const std::shared_ptr<const Context>& context) const;
+  [[nodiscard]] Value get_value(const std::shared_ptr<const Context>& context, const Value& container) const;
   void print(std::ostream& stream, const std::string& indent) const override;
 private:
   shared_ptr<Expression> expr;
@@ -193,7 +197,9 @@ public:
   [[nodiscard]] const std::string& get_name() const { return name; }
   static Expression *create(const std::string& funcname, const AssignmentList& arglist, Expression *expr, const Location& loc);
 public:
-  bool isLookup;
+  bool isLookup{false};
+  bool isArrayLookup{false};
+  bool isMemberLookup{false};
   std::string name;
   shared_ptr<Expression> expr;
   AssignmentList arguments;
