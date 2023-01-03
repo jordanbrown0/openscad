@@ -753,11 +753,6 @@ bool Value::isUncheckedUndef() const
   return this->type() == Type::UNDEFINED && !std::get<UndefType>(this->value).empty();
 }
 
-Value FunctionType::bind(const Value& container) {
-  auto v = this->clone();
-  NEEDSWORK
-}
-
 Value FunctionType::operator==(const FunctionType& other) const {
   return this == &other;
 }

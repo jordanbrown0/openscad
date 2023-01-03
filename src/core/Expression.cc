@@ -541,12 +541,12 @@ FunctionCall::FunctionCall(Expression *expr, AssignmentList args, const Location
   }
 }
 
-boost::optional<CallableFunction> FunctionCall::evaluate_function_expression(const std::shared_ptr<const Context>& context) const
+boost::optional<CallableFunction> FunctionCall::evaluate_function_expression(const std::shared_ptr<const Context>& context, boost::optional<Value>& container) const
 {
   boost::optional<Value> f;
-  boost::optional<Value> container;
 
   if (isLookup) {
+    container = boost::none;
     return context->lookup_function(name, location());
   } else if (isArrayLookup) {
     auto alu = static_cast<ArrayLookup *>(&*expr);
@@ -558,6 +558,7 @@ boost::optional<CallableFunction> FunctionCall::evaluate_function_expression(con
     f = mlu->get_value(context, *container);
   } else {
     f = expr->evaluate(context);
+    container = boost::none;
   }
   if (f->type() != Value::Type::FUNCTION) {
     LOG(message_group::Warning, loc, context->documentRoot(), "Can't call function on %1$s", f->typeName());
@@ -599,8 +600,9 @@ static SimplificationResult simplify_function_body(const Expression *expression,
       const Expression *function_body;
       const AssignmentList *required_parameters;
       std::shared_ptr<const Context> defining_context;
+      boost::optional<Value> container;
 
-      auto f = call->evaluate_function_expression(context);
+      auto f = call->evaluate_function_expression(context, container);
       if (!f) {
         return Value::undefined.clone();
       } else {
@@ -631,6 +633,9 @@ static SimplificationResult simplify_function_body(const Expression *expression,
       Arguments arguments{call->arguments, context};
       Parameters parameters = Parameters::parse(std::move(arguments), call->location(), *required_parameters, defining_context);
       body_context->apply_variables(std::move(parameters).to_context_frame());
+      if (container) {
+        body_context->set_variable("$this", std::move(*container));
+      }
 
       return SimplifiedExpression{function_body, std::move(body_context), call};
     } else {

@@ -191,7 +191,7 @@ class FunctionCall : public Expression
 {
 public:
   FunctionCall(Expression *expr, AssignmentList arglist, const Location& loc);
-  [[nodiscard]] boost::optional<CallableFunction> evaluate_function_expression(const std::shared_ptr<const Context>& context) const;
+  [[nodiscard]] boost::optional<CallableFunction> evaluate_function_expression(const std::shared_ptr<const Context>& context, boost::optional<Value>& container) const;
   [[nodiscard]] Value evaluate(const std::shared_ptr<const Context>& context) const override;
   void print(std::ostream& stream, const std::string& indent) const override;
   [[nodiscard]] const std::string& get_name() const { return name; }
