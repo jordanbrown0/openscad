@@ -4,7 +4,6 @@
 # This file is distributed under the same license as the OpenSCAD package.
 # Daniel Nylander <github@danielnylander.se>, 2025.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenSCAD\n"
@@ -360,25 +359,25 @@ msgstr "Knapp 22"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:194
 msgid "AI Chat"
-msgstr ""
+msgstr "AI-chatt"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:195
 #: src/gui/ai/ChatWidget.cc:138
 msgid "AI Assistant"
-msgstr ""
+msgstr "AI-assistent"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:197
 msgid "Chat options"
-msgstr ""
+msgstr "Chattalternativ"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:199
 msgid "☰"
-msgstr ""
+msgstr "☰"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:201
 #: src/gui/ai/ChatWidget.cc:140
 msgid "Clear chat history"
-msgstr ""
+msgstr "Rensa chatthistorik"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:203
 #: build/OpenSCADLibInternal_autogen/include/ui_Console.h:42
@@ -389,34 +388,36 @@ msgstr "Töm"
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:204
 #: src/gui/ai/ChatWidget.cc:141 src/gui/ai/ChatWidget.cc:630
 msgid "Send"
-msgstr ""
+msgstr "Skicka"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:206
 msgid "Grab active 3D viewport frame and camera metadata"
-msgstr ""
+msgstr "Hämta bildruta och kamerametadata från aktiv 3D-vy"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:208
 msgid "Analyze Screen"
-msgstr ""
+msgstr "Analysera skärmen"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:210
 msgid "Attach local image file"
-msgstr ""
+msgstr "Bifoga lokal bildfil"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:212
 #: src/gui/ai/ChatWidget.cc:508
 msgid "Attach Image"
-msgstr ""
+msgstr "Bifoga bild"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:214
 msgid ""
 "Agentic mode: allow the AI to call tools in multiple automatic turns per "
 "request"
 msgstr ""
+"Agentläge: tillåt att AI:n anropar verktyg i flera automatiska omgångar per "
+"begäran"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ChatWidget.h:216
 msgid "Agentic"
-msgstr ""
+msgstr "Agentbaserad"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ColorList.h:399
 msgid "Color List"
@@ -1229,12 +1230,10 @@ msgid "Ctrl+N"
 msgstr "Ctrl+N"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1010
-#, fuzzy
 msgid "New &Window"
 msgstr "Nytt fönster"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1011
-#, fuzzy
 msgid "&Open File..."
 msgstr "Ö&ppna fil"
 
@@ -1243,7 +1242,6 @@ msgid "Ctrl+O"
 msgstr "Ctrl+O"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1015
-#, fuzzy
 msgid "Open in New Windo&w"
 msgstr "Öppna i nytt fönster"
 
@@ -1264,12 +1262,10 @@ msgid "Ctrl+Shift+S"
 msgstr "Ctrl+Shift+S"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1024
-#, fuzzy
 msgid "Save a C&opy..."
 msgstr "Spara en kopia"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1025
-#, fuzzy
 msgid "S&ave All"
 msgstr "Spara alla"
 
@@ -1359,24 +1355,21 @@ msgstr "Ctrl+Shift+D"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1069
 msgid "Mo&ve Line Up"
-msgstr ""
+msgstr "Flytta raden &uppåt"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1071
-#, fuzzy
 msgid "Ctrl+Alt+Up"
-msgstr "Ctrl+Alt+F"
+msgstr "Ctrl+Alt+Upp"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1073
 msgid "Mo&ve Line Down"
-msgstr ""
+msgstr "Flytta raden &nedåt"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1075
-#, fuzzy
 msgid "Ctrl+Alt+Down"
-msgstr "Ctrl+Alt+F"
+msgstr "Ctrl+Alt+Ner"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1077
-#, fuzzy
 msgid "Show &Next Tab"
 msgstr "Visa nästa flik"
 
@@ -1385,7 +1378,6 @@ msgid "Ctrl+Tab"
 msgstr "Ctrl+Tab"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1081
-#, fuzzy
 msgid "Show P&revious Tab"
 msgstr "Visa föregående flik"
 
@@ -1490,17 +1482,14 @@ msgid "&Check Validity"
 msgstr "&Kontrollera giltighet"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1129
-#, fuzzy
 msgid "Display A&ST"
 msgstr "Visa A&ST..."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1130
-#, fuzzy
 msgid "Display CSG &Tree"
 msgstr "Visa CSG-&träd..."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1131
-#, fuzzy
 msgid "Display CSG Pr&oducts"
 msgstr "Visa CSG-pr&odukter..."
 
@@ -1529,7 +1518,6 @@ msgid "Export as &WRL..."
 msgstr "Exportera som &WRL..."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1138
-#, fuzzy
 msgid "P&review"
 msgstr "Förhandsvisa"
 
@@ -1538,7 +1526,6 @@ msgid "F9"
 msgstr "F9"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1142
-#, fuzzy
 msgid "T&hrown Together"
 msgstr "Kastade tillsammans"
 
@@ -1547,7 +1534,6 @@ msgid "F12"
 msgstr "F12"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1146
-#, fuzzy
 msgid "&Show Edges"
 msgstr "Visa kanter"
 
@@ -1556,7 +1542,6 @@ msgid "Ctrl+1"
 msgstr "Ctrl+1"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1150
-#, fuzzy
 msgid "Show A&xes"
 msgstr "Visa axlar"
 
@@ -1565,7 +1550,6 @@ msgid "Ctrl+2"
 msgstr "Ctrl+2"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1154
-#, fuzzy
 msgid "Show &Crosshairs"
 msgstr "Visa hårkors"
 
@@ -1574,7 +1558,6 @@ msgid "Ctrl+3"
 msgstr "Ctrl+3"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1158
-#, fuzzy
 msgid "Show Scale &Markers"
 msgstr "Visa skalmarkeringar"
 
@@ -1732,7 +1715,6 @@ msgid "Ctrl+E"
 msgstr "Ctrl+E"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1228
-#, fuzzy
 msgid "J&ump to next error"
 msgstr "Hoppa till nästa fel"
 
@@ -1765,12 +1747,10 @@ msgid "&Library info"
 msgstr "&Biblioteksinfo"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1238
-#, fuzzy
 msgid "Show &Library Folder"
 msgstr "Visa &biblioteksmapp..."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1239
-#, fuzzy
 msgid "Reset &View"
 msgstr "Återställ vy"
 
@@ -1783,7 +1763,6 @@ msgid "Export as &3MF..."
 msgstr "Exportera som &3MF..."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1242
-#, fuzzy
 msgid "Zoom &In"
 msgstr "Zooma in"
 
@@ -1792,7 +1771,6 @@ msgid "Ctrl+]"
 msgstr "Ctrl+]"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1246
-#, fuzzy
 msgid "&Zoom Out"
 msgstr "Zooma ut"
 
@@ -1801,7 +1779,6 @@ msgid "Ctrl+["
 msgstr "Ctrl+["
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1250
-#, fuzzy
 msgid "View &All"
 msgstr "Visa alla"
 
@@ -1814,7 +1791,6 @@ msgid "Conv&ert Tabs to Spaces"
 msgstr "Konvertera &tabbar till blanksteg"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1255
-#, fuzzy
 msgid "&Toggle Bookmark"
 msgstr "Växla bokmärke"
 
@@ -1823,7 +1799,6 @@ msgid "Ctrl+F2"
 msgstr "Ctrl+F2"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1259
-#, fuzzy
 msgid "Jump to next &bookmark"
 msgstr "Hoppa till nästa bokmärke"
 
@@ -1832,7 +1807,6 @@ msgid "F2"
 msgstr "F2"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1263
-#, fuzzy
 msgid "Jump to &previous bookmark"
 msgstr "Hoppa till föregående bokmärke"
 
@@ -1841,7 +1815,6 @@ msgid "Shift+F2"
 msgstr "Skift+F2"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1267
-#, fuzzy
 msgid "&Hide Editor toolbar"
 msgstr "Dölj redigeringsverktygsfält"
 
@@ -1862,9 +1835,8 @@ msgid "Export as PDF..."
 msgstr "Exportera som PDF..."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1274
-#, fuzzy
 msgid "Hide &3D View toolbar"
-msgstr "Dölj verktygsfältets 3D-vy"
+msgstr "Dölj verktygsfält för 3D-vy"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1275
 msgid "&Next Window\tCtrl+K"
@@ -1883,12 +1855,10 @@ msgid "Alt+Ins"
 msgstr "Alt+Inn"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1281
-#, fuzzy
 msgid "Fold/Unfold All"
-msgstr "Vik/vik inte alla"
+msgstr "Fäll ihop/fäll ut alla"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_MainWindow.h:1282
-#, fuzzy
 msgid "&Jump To"
 msgstr "Gå till …"
 
@@ -2142,9 +2112,8 @@ msgid "-"
 msgstr "-"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ParameterWidget.h:175
-#, fuzzy
 msgid "More actions"
-msgstr "Anteckningar"
+msgstr "Fler åtgärder"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2465
 msgid "3D View"
@@ -2197,13 +2166,12 @@ msgid "Dialogs"
 msgstr "Dialogrutor"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2484
-#, fuzzy
 msgid "AI"
-msgstr "A"
+msgstr "AI"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2486
 msgid "AI and LLM configurations"
-msgstr ""
+msgstr "Konfigurationer för AI och LLM"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2488
 msgid "Directory of the output file"
@@ -2274,7 +2242,7 @@ msgstr "Automatisk komplettering"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2505
 msgid " Include defined modules"
-msgstr ""
+msgstr " Inkludera definierade moduler"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2506
 msgid "Character Threshold"
@@ -2282,7 +2250,7 @@ msgstr "Tröskelvärde för tecken"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2507
 msgid " Include defined functions"
-msgstr ""
+msgstr " Inkludera definierade funktioner"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2508
 msgid "Enable Autocompletion"
@@ -2290,22 +2258,21 @@ msgstr "Aktivera automatisk komplettering"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2509
 msgid " Include defined variables"
-msgstr ""
+msgstr " Inkludera definierade variabler"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2510
 msgid "Mode"
-msgstr ""
+msgstr "Läge"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2511
 #: src/core/Settings.cc:519
-#, fuzzy
 msgid "Parsed File Mode"
-msgstr "Betrodda filer"
+msgstr "Tolkat filläge"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2512
 #: src/core/Settings.cc:520
 msgid "Regex Input Text Mode"
-msgstr ""
+msgstr "Textläge för regex-indata"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2514
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2539
@@ -2493,9 +2460,8 @@ msgid "Last checked: "
 msgstr "Senast kontrollerad: "
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2570
-#, fuzzy
 msgid "Experimental Features"
-msgstr "Exportfunktioner"
+msgstr "Experimentella funktioner"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2571
 msgid ""
@@ -2504,6 +2470,10 @@ msgid ""
 "you must assume that they may not be in their final form and may never "
 "appear in an OpenSCAD release in any form."
 msgstr ""
+"De här funktionerna är experimentella. De kan ändras eller tas bort helt "
+"utan föregående meddelande. Du kan aktivera, använda och kommentera dem, "
+"men du måste utgå från att de kanske inte har sin slutgiltiga form och "
+"kanske aldrig kommer med i någon version av OpenSCAD."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2572
 msgid "General"
@@ -2641,14 +2611,12 @@ msgid "User Interface"
 msgstr "Användargränssnitt"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2618
-#, fuzzy
 msgid "Enable docking helper widgets in different places"
-msgstr "Aktivera dockning av Redigera och Konsol på olika platser"
+msgstr "Aktivera dockning av hjälpwidgetar på olika platser"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2619
-#, fuzzy
 msgid "Enable undocking of helper widgets to separate windows"
-msgstr "Aktivera avdockning av Redigerare och Konsol till separata fönster"
+msgstr "Aktivera avdockning av hjälpwidgetar till separata fönster"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2620
 msgid "Enable user interface localization (requires restart of OpenSCAD)"
@@ -2766,22 +2734,21 @@ msgstr "Aktivera spårning av HIDAPI-händelser (kräver omstart av OpenSCAD)"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2650
 msgid "Network"
-msgstr ""
+msgstr "Nätverk"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2651
 msgid "Custom CA certificates (PEM)"
-msgstr ""
+msgstr "Anpassade CA-certifikat (PEM)"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2653
 msgid "Skip TLS certificate verification (insecure)"
-msgstr ""
+msgstr "Hoppa över TLS-certifikatkontroll (osäkert)"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2654
 msgid "Dialog visibility"
 msgstr "Dialogrutors synlighet"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2655
-#, fuzzy
 msgid "Always show Welcome screen"
 msgstr "Visa välkomstskärm"
 
@@ -2798,65 +2765,60 @@ msgid "Always show Print Service dialog"
 msgstr "Visa alltid dialogrutan för utskriftstjänst"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2659
-#, fuzzy
 msgid "AI Preferences"
-msgstr "Inställningar"
+msgstr "AI-inställningar"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2660
 msgid ""
 "AI assistant integration is active. Configure your connection profiles and "
 "parameters below."
 msgstr ""
+"AI-assistentintegreringen är aktiv. Konfigurera dina anslutningsprofiler "
+"och parametrar nedan."
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2661
-#, fuzzy
 msgid "Profiles"
-msgstr "Skärningsprofil"
+msgstr "Profiler"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2662
-#, fuzzy
 msgid "Active Profile"
-msgstr "Skärningsprofil"
+msgstr "Aktiv profil"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2663
-#, fuzzy
 msgid "New Profile"
-msgstr "&Ny fil"
+msgstr "Ny profil"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2664
 msgid "Delete"
-msgstr ""
+msgstr "Ta bort"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2665
 msgid "API Configuration"
-msgstr ""
+msgstr "API-konfiguration"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2666
 msgid "API Endpoint"
-msgstr ""
+msgstr "API-ändpunkt"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2668
 msgid "System Prompt / Instructions"
-msgstr ""
+msgstr "Systemprompt/instruktioner"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2669
 msgid "Default User Prompt"
-msgstr ""
+msgstr "Standardprompt för användare"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2670
-#, fuzzy
 msgid "API Parameters"
-msgstr "Parameter"
+msgstr "API-parametrar"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2671
-#, fuzzy
 msgid "Add Parameter"
-msgstr "Parameter"
+msgstr "Lägg till parameter"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_Preferences.h:2672
-#, fuzzy
 msgid "Remove Parameter"
-msgstr "Parameter"
+msgstr "Ta bort parameter"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_PrintInitDialog.h:180
 msgid "Run local Application"
@@ -2876,17 +2838,15 @@ msgstr "%v / %m"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ShortcutConfigurator.h:68
 msgid "Shortcut"
-msgstr ""
+msgstr "Kortkommando"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ShortcutConfigurator.h:69
-#, fuzzy
 msgid "Reset"
-msgstr "Förinställning"
+msgstr "Återställ"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ShortcutConfigurator.h:71
-#, fuzzy
 msgid "Search action..."
-msgstr "Söksträng"
+msgstr "Sök åtgärd …"
 
 #: build/OpenSCADLibInternal_autogen/include/ui_ViewportControl.h:266
 msgid "ViewportControlWidget"
@@ -2975,7 +2935,6 @@ msgid "Base Material"
 msgstr "Basmaterial"
 
 #: src/core/Settings.cc:509
-#, fuzzy
 msgid "Alphabetical"
 msgstr "Alfabetiskt"
 
@@ -2990,143 +2949,136 @@ msgstr ""
 
 #: src/gui/ai/ChatWidget.cc:101 src/gui/ai/ChatWidget.cc:454
 msgid "Thinking..."
-msgstr ""
+msgstr "Tänker …"
 
 #: src/gui/ai/ChatWidget.cc:110
 msgid "Thinking"
-msgstr ""
+msgstr "Tänker"
 
 #: src/gui/ai/ChatWidget.cc:153
-#, fuzzy
 msgid "Export Chat..."
-msgstr "Exportera som PDF..."
+msgstr "Exportera chatt …"
 
 #: src/gui/ai/ChatWidget.cc:154
-#, fuzzy
 msgid "Import Chat..."
-msgstr "Exportera som PDF..."
+msgstr "Importera chatt …"
 
 #: src/gui/ai/ChatWidget.cc:156
 msgid "Copy as Markdown"
-msgstr ""
+msgstr "Kopiera som Markdown"
 
 #: src/gui/ai/ChatWidget.cc:200 src/gui/ai/ChatWidget.cc:613
 msgid ""
 "Hello! I am your OpenSCAD AI assistant. Ask me to write some code, e.g. "
 "\"draw a sphere\" or \"create a box with a hole\"."
 msgstr ""
+"Hej! Jag är din AI-assistent för OpenSCAD. Be mig skriva kod, till exempel "
+"\"rita en sfär\" eller \"skapa en låda med ett hål\"."
 
 #: src/gui/ai/ChatWidget.cc:215
 msgid "AI proposed code changes:"
-msgstr ""
+msgstr "AI-föreslagna kodändringar:"
 
 #: src/gui/ai/ChatWidget.cc:218
 msgid "Review & Apply"
-msgstr ""
+msgstr "Granska och &tillämpa"
 
 #: src/gui/ai/ChatWidget.cc:223
-#, fuzzy
 msgid "Discard"
-msgstr "Jokertecken"
+msgstr "Förkasta"
 
 #: src/gui/ai/ChatWidget.cc:291 src/gui/ai/ChatWidget.cc:634
 msgid "Stop"
-msgstr ""
+msgstr "Stoppa"
 
 #: src/gui/ai/ChatWidget.cc:481 src/gui/ai/ChatWidget.cc:488
-#, fuzzy
 msgid "Viewport Error"
-msgstr "Vyfältskontroll"
+msgstr "Fel i visningsyta"
 
 #: src/gui/ai/ChatWidget.cc:482
 msgid "Could not find active 3D Viewport to grab screen."
-msgstr ""
+msgstr "Kunde inte hitta en aktiv 3D-vy att hämta skärmbild från."
 
 #: src/gui/ai/ChatWidget.cc:488
 msgid "Failed to capture 3D viewport frame."
-msgstr ""
+msgstr "Kunde inte hämta bildruta från 3D-vyn."
 
 #: src/gui/ai/ChatWidget.cc:509
 msgid "Image Files (*.png *.jpg *.jpeg *.webp)"
-msgstr ""
+msgstr "Bildfiler (*.png *.jpg *.jpeg *.webp)"
 
 #: src/gui/ai/ChatWidget.cc:517
-#, fuzzy
 msgid "File Error"
-msgstr "Dölj fellogg"
+msgstr "Filfel"
 
 #: src/gui/ai/ChatWidget.cc:517
 msgid "Could not open the selected image file."
-msgstr ""
+msgstr "Kunde inte öppna den valda bildfilen."
 
 #: src/gui/ai/ChatWidget.cc:577
 msgid "[Img]"
-msgstr ""
+msgstr "[Bild]"
 
 #: src/gui/ai/ChatWidget.cc:582
 msgid "Remove attachment"
-msgstr ""
+msgstr "Ta bort bilaga"
 
 #: src/gui/ai/ChatWidget.cc:902
 msgid "Export Chat History"
-msgstr ""
+msgstr "Exportera chatthistorik"
 
 #: src/gui/ai/ChatWidget.cc:902 src/gui/ai/ChatWidget.cc:949
-#, fuzzy
 msgid "JSON Files (*.json)"
-msgstr "CSG-filer (*.csg)"
+msgstr "JSON-filer (*.json)"
 
 #: src/gui/ai/ChatWidget.cc:938
-#, fuzzy
 msgid "Export Warning"
-msgstr "Exportera bild"
+msgstr "Exportvarning"
 
 #: src/gui/ai/ChatWidget.cc:938
 msgid "Could not write to the chosen file."
-msgstr ""
+msgstr "Kunde inte skriva till den valda filen."
 
 #: src/gui/ai/ChatWidget.cc:943
-#, fuzzy
 msgid "Export Successful"
-msgstr "Exportfunktioner"
+msgstr "Exporten lyckades"
 
 #: src/gui/ai/ChatWidget.cc:943
 msgid "Chat history exported successfully."
-msgstr ""
+msgstr "Chatthistoriken exporterades."
 
 #: src/gui/ai/ChatWidget.cc:949
 msgid "Import Chat History"
-msgstr ""
+msgstr "Importera chatthistorik"
 
 #: src/gui/ai/ChatWidget.cc:957 src/gui/ai/ChatWidget.cc:965
 #: src/gui/ai/ChatWidget.cc:970 src/gui/ai/ChatWidget.cc:1013
-#, fuzzy
 msgid "Import Warning"
-msgstr "OpenGL-varning"
+msgstr "Importvarning"
 
 #: src/gui/ai/ChatWidget.cc:957
 msgid "Could not open the selected file."
-msgstr ""
+msgstr "Kunde inte öppna den valda filen."
 
 #: src/gui/ai/ChatWidget.cc:971
 msgid "Selected file does not contain a valid chat history array."
-msgstr ""
+msgstr "Den valda filen innehåller inte en giltig chatthistoriklista."
 
 #: src/gui/ai/ChatWidget.cc:1016
 msgid "Import Successful"
-msgstr ""
+msgstr "Importen lyckades"
 
 #: src/gui/ai/ChatWidget.cc:1016
 msgid "Chat history imported successfully."
-msgstr ""
+msgstr "Chatthistoriken importerades."
 
 #: src/gui/ai/ChatWidget.cc:1051
 msgid "Chat Copied"
-msgstr ""
+msgstr "Chatten kopierades"
 
 #: src/gui/ai/ChatWidget.cc:1052
 msgid "Chat conversation copied to clipboard as Markdown."
-msgstr ""
+msgstr "Chattkonversationen kopierades till urklipp som Markdown."
 
 #: src/gui/Animate.cc:207
 msgid "press to pause animation"
@@ -3142,7 +3094,7 @@ msgstr "felaktiga värden"
 
 #: src/gui/ColorList.cc:207
 msgid "Filter (%1 colors found)"
-msgstr ""
+msgstr "Filter (%1 färger hittades)"
 
 #: src/gui/Console.cc:188
 msgid "Save console content"
@@ -3297,7 +3249,7 @@ msgstr "PNG-filer (*.png)"
 
 #: src/gui/MainWindow.cc:3027 src/gui/MainWindow.cc:3787
 msgid "&AI Chat"
-msgstr ""
+msgstr "&AI-chatt"
 
 #: src/gui/MainWindow.cc:3129 src/gui/TabManager.cc:735
 #: src/gui/TabManager.cc:786
@@ -3325,17 +3277,14 @@ msgid "&Animate"
 msgstr "&Animera"
 
 #: src/gui/MainWindow.cc:3784
-#, fuzzy
 msgid "&Font List"
 msgstr "Teckensnittslista"
 
 #: src/gui/MainWindow.cc:3785
-#, fuzzy
 msgid "C&olor List"
 msgstr "Färglista"
 
 #: src/gui/MainWindow.cc:3786
-#, fuzzy
 msgid "&Viewport Control"
 msgstr "Vyfältskontroll"
 
@@ -3380,13 +3329,12 @@ msgstr ""
 "Detta kan ta upp till ett par minuter."
 
 #: src/gui/parameter/ParameterWidget.cc:72
-#, fuzzy
 msgid "Collapse All"
-msgstr "Spara alla"
+msgstr "Fäll ihop alla"
 
 #: src/gui/parameter/ParameterWidget.cc:75
 msgid "Expand All"
-msgstr ""
+msgstr "Fäll ut alla"
 
 #: src/gui/parameter/ParameterWidget.cc:116
 msgid "Saving presets"
@@ -3409,18 +3357,16 @@ msgid "New set "
 msgstr "Ny uppsättning "
 
 #: src/gui/Preferences.cc:273
-#, fuzzy
 msgid "Parameter Key"
-msgstr "Parameter"
+msgstr "Parameternyckel"
 
 #: src/gui/Preferences.cc:273
-#, fuzzy
 msgid "Parameter Value"
-msgstr "Parameter"
+msgstr "Parametervärde"
 
 #: src/gui/Preferences.cc:289 src/gui/Preferences.cc:294
 msgid "Ollama Local"
-msgstr ""
+msgstr "Lokal Ollama"
 
 #: src/gui/Preferences.cc:446 src/gui/Preferences.cc:451
 #: src/gui/Preferences.cc:1384 src/gui/Preferences.cc:1423
@@ -3433,11 +3379,11 @@ msgstr "INGEN"
 
 #: src/gui/Preferences.cc:1113
 msgid "Select CA certificate"
-msgstr ""
+msgstr "Välj CA-certifikat"
 
 #: src/gui/Preferences.cc:1114
 msgid "Certificate files (*.pem *.crt *.cer);;All files (*)"
-msgstr ""
+msgstr "Certifikatfiler (*.pem *.crt *.cer);;Alla filer (*)"
 
 #: src/gui/Preferences.cc:1367
 msgid "Success: Server Version = %2, API Version = %1"
@@ -3449,31 +3395,28 @@ msgid "Error"
 msgstr "Fel"
 
 #: src/gui/Preferences.cc:1484
-#, fuzzy
 msgid "New AI Profile"
-msgstr "&Ny fil"
+msgstr "Ny AI-profil"
 
 #: src/gui/Preferences.cc:1484
-#, fuzzy
 msgid "Profile name:"
-msgstr "Kopiera filnamn"
+msgstr "Profilnamn:"
 
 #: src/gui/Preferences.cc:1489
-#, fuzzy
 msgid "Duplicate Profile"
-msgstr "Skärningsprofil"
+msgstr "Duplicera profil"
 
 #: src/gui/Preferences.cc:1489
 msgid "A profile with that name already exists."
-msgstr ""
+msgstr "En profil med det namnet finns redan."
 
 #: src/gui/Preferences.cc:1551
 msgid "Delete AI Profile"
-msgstr ""
+msgstr "Ta bort AI-profil"
 
 #: src/gui/Preferences.cc:1552
 msgid "Delete profile \"%1\"?"
-msgstr ""
+msgstr "Ta bort profilen ”%1”?"
 
 #: src/gui/QGLView.cc:188
 msgid ""
@@ -3532,7 +3475,7 @@ msgstr "Stäng fliken"
 
 #: src/gui/TabManager.cc:458
 msgid "Close All But This Tab"
-msgstr ""
+msgstr "Stäng alla utom den här fliken"
 
 #: src/gui/TabManager.cc:607
 msgid "The document has been modified."
