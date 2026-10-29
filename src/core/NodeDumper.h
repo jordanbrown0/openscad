@@ -10,6 +10,7 @@
 #include "core/NodeCache.h"
 #include "core/NodeVisitor.h"
 #include "core/node.h"
+#include "core/PartNode.h"
 
 class NodeDumper : public NodeVisitor
 {
@@ -23,6 +24,7 @@ public:
   Response visit(State& state, const AbstractNode& node) override;
   Response visit(State& state, const ListNode& node) override;
   Response visit(State& state, const RootNode& node) override;
+  // Response visit(State& state, const PartNode& node) override;
 
 private:
   void initCache();

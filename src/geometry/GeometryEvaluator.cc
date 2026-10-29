@@ -503,6 +503,7 @@ Response GeometryEvaluator::visit(State& state, const ColorNode& node)
  */
 Response GeometryEvaluator::visit(State& state, const AbstractNode& node)
 {
+  printf("GeometryEvaluator::visit(AbstractNode)\n"); fflush(stdout);
   if (state.isPrefix()) {
     if (isSmartCached(node)) return Response::PruneTraversal;
     state.setPreferNef(true);  // Improve quality of CSG by avoiding conversion loss
@@ -551,6 +552,7 @@ Response GeometryEvaluator::visit(State& state, const ListNode& node)
  */
 Response GeometryEvaluator::visit(State& state, const GroupNode& node)
 {
+  printf("GeometryEvaluator::visit(GroupNode)\n"); fflush(stdout);
   return visit(state, (const AbstractNode&)node);
 }
 

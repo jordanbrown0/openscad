@@ -119,6 +119,7 @@ public:
   GroupNode(const ModuleInstantiation *mi, std::string name = "")
     : AbstractNode(mi), _name(std::move(name))
   {
+printf("GroupNode()\n"); fflush(stdout);
   }
   std::string name() const override;
   std::string verbose_name() const override;

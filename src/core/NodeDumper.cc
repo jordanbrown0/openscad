@@ -42,6 +42,7 @@ bool NodeDumper::isCached(const AbstractNode& node) const
  */
 Response NodeDumper::visit(State& state, const AbstractNode& node)
 {
+printf("NodeDumper::visit(AbstractNode)\n"); fflush(stdout);
   if (state.isPrefix()) {
     // For handling root modifier '!'
     // Check if we are processing the root of the current Tree and init cache
