@@ -118,7 +118,7 @@ public:
   GeometryMap children;
 
   GeometryParts();
-  // NEEDSWORK I'm not sure what the right replace is for this.
+  // NEEDSWORK I'm not sure what the right replacement is for this.
   //GeometryParts(Geometry::Geometries geometries);
 
   [[nodiscard]] size_t memsize() const override;
@@ -134,4 +134,5 @@ public:
   }
 
   [[nodiscard]] const GeometryMap& getChildren() const { return this->children; }
+  void add(std::optional<std::string> key, std::shared_ptr<const Geometry> part);
 };

@@ -64,34 +64,63 @@ std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geomet
     return std::make_shared<ManifoldGeometry>(manifold::Manifold::Hull(pts));
   }
 
-  std::shared_ptr<ManifoldGeometry> geom;
+  auto geom = std::make_shared<GeometryParts>();
 
   bool foundFirst = false;
 
   for (const auto& item : children) {
     // NEEDSWORK GeometryParts!!!  This is the most key place.
-    auto chN = item.second ? createManifoldFromGeometry(item.second) : nullptr;
+    std::shared_ptr<const Geometry>chN = item.second;
 
-    // Intersecting something with nothing results in nothing
+    // Some special cases for empty children.
     if (!chN || chN->isEmpty()) {
+      // Intersecting something with nothing results in nothing.
       if (op == OpenSCADOperator::INTERSECTION) {
         geom = nullptr;
         break;
       }
+      // Differencing anything from nothing results in nothing.
       if (op == OpenSCADOperator::DIFFERENCE && !foundFirst) {
         geom = nullptr;
         break;
       }
+      // And for everything else, we can just ignore empties.
       continue;
     }
 
     // Initialize geom with first expected geometric object
     if (!foundFirst) {
-      geom = std::make_shared<ManifoldGeometry>(*chN);
+      if (auto gp = dynamic_cast<const GeometryParts *>(&*chN)) {
+        // First child is a GeometryParts; transcribe it.
+        for (auto childItem : gp->children) {
+          std::optional<std::string> key = childItem.first;
+          std::shared_ptr<const Geometry> g = childItem.second;
+          geom->add(key, g);
+        }
+      } else {
+        // First child is something else; convert it.
+        // NEEDSWORK probably we should ensure that the children
+        // are always GeometryParts, and then we wouldn't need
+        // this.
+        auto mg = createManifoldFromGeometry(chN);
+        geom->add(std::nullopt, mg);
+      }
       foundFirst = true;
       continue;
     }
 
+    // If the child isn't a GeometryParts, convert it into one.
+    // As above, probably we should ensure that the child will always be a GeometryParts
+    // so that we don't need conversion.
+    const GeometryParts *gpchild = dynamic_cast<const GeometryParts *>(&*chN);
+    auto gptemp = std::make_shared<GeometryParts>();
+    if (!gpchild) {
+      auto mg = createManifoldFromGeometry(chN);
+      gptemp->add(std::nullopt, mg);
+      gpchild = &*gptemp;
+    }
+
+    //createManifoldFromGeometry(item.second) : nullptr;
     switch (op) {
     case OpenSCADOperator::UNION:        *geom = *geom + *chN; break;
     case OpenSCADOperator::INTERSECTION: *geom = *geom * *chN; break;
