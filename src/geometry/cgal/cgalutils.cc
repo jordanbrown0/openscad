@@ -514,28 +514,4 @@ template Transform3d computeResizeTransform(const CGAL_Iso_cuboid_3& bb, unsigne
                                             const Vector3d& newsize,
                                             const Eigen::Matrix<bool, 3, 1>& autosize);
 
-std::shared_ptr<const PolySet> getGeometryAsPolySet(const std::shared_ptr<const Geometry>& geom)
-{
-  if (auto ps = std::dynamic_pointer_cast<const PolySet>(geom)) {
-    return ps;
-  }
-  if (auto N = std::dynamic_pointer_cast<const CGALNefGeometry>(geom)) {
-    auto ps = std::make_shared<PolySet>(3);
-    if (!N->isEmpty()) {
-      if (auto ps = CGALUtils::createPolySetFromNefPolyhedron3(*N->p3)) {
-        ps->setConvexity(N->getConvexity());
-        return ps;
-      }
-      LOG(message_group::Error, "Nef->PolySet failed.");
-    }
-    return std::make_shared<PolySet>(3);
-  }
-#ifdef ENABLE_MANIFOLD
-  if (auto mani = std::dynamic_pointer_cast<const ManifoldGeometry>(geom)) {
-    return mani->toPolySet();
-  }
-#endif
-  return nullptr;
-}
-
 }  // namespace CGALUtils

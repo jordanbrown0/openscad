@@ -1,0 +1,35 @@
+#pragma once
+
+#include <cstddef>
+#include <deque>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "core/node.h"
+#include "core/AST.h"
+#include "core/BaseVisitable.h"
+#include "core/ModuleInstantiation.h"
+
+/*!
+   Logically groups objects together. Used as a way of passing
+   objects around without having to perform unions on them.
+ */
+class PartNode : public GroupNode
+{
+public:
+  VISITABLE();
+  PartNode(const ModuleInstantiation *mi, std::string partName)
+    : GroupNode(mi), partName_(partName)
+  {
+  }
+
+  std::string name() const override;
+  const std::string& partName() const;
+  std::string toString() const override;
+
+private:
+  const std::string partName_;
+};

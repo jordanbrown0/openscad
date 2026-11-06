@@ -70,7 +70,13 @@ CGALRenderer::CGALRenderer(const std::shared_ptr<const class Geometry>& geom)
 
 void CGALRenderer::addGeometry(const std::shared_ptr<const Geometry>& geom)
 {
-  if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
+  if (const auto geomlist = std::dynamic_pointer_cast<const GeometryParts>(geom)) {
+    // This is for viewing; we can flatten out parts.
+    // NEEDSWORK:  arguably we should eventually have a UI for displaying only some parts.
+    for (const auto& item : geomlist->getChildren()) {
+      this->addGeometry(item.second);
+    }
+  } else if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
     for (const auto& item : geomlist->getChildren()) {
       this->addGeometry(item.second);
     }

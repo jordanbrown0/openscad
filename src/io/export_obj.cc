@@ -38,6 +38,7 @@ void export_obj(const std::shared_ptr<const Geometry>& geom, std::ostream& outpu
 {
   // FIXME: In lazy union mode, should we export multiple objects?
 
+  // NEEDSWORK GeometryParts:  should export multiple parts
   std::shared_ptr<const PolySet> out = PolySetUtils::getGeometryAsPolySet(geom);
   if (!out->isTriangular()) {
     // While the OBJ format allows for faces to have more than 3

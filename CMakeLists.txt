@@ -1076,6 +1076,8 @@ set(CORE_SOURCES
   src/core/NodeVisitor.cc
   src/core/OffsetNode.cc
   src/core/Parameters.cc
+  src/core/PartModule.cc
+  src/core/PartNode.cc
   src/core/ProjectionNode.cc
   src/core/RenderNode.cc
   src/core/RenderVariables.cc
@@ -1121,6 +1123,7 @@ set(CORE_SOURCES
   src/geometry/Geometry.cc
   src/geometry/GeometryCache.cc
   src/geometry/GeometryEvaluator.cc
+  src/geometry/GeometryParts.cc
   src/geometry/GeometryUtils.cc
   src/geometry/PolySet.cc
   src/geometry/PolySetBuilder.cc

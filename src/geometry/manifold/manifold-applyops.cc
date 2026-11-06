@@ -49,6 +49,7 @@ std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geomet
           }
         }
       } else {
+        // NEEDSWORK GeometryParts:  arguably, hull of a named part should be an error.
         auto chN = createManifoldFromGeometry(chgeom);
         if (chN && !chN->isEmpty()) {
           chN->foreachVertexUntilTrue([&](auto& p) {
@@ -68,6 +69,7 @@ std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geomet
   bool foundFirst = false;
 
   for (const auto& item : children) {
+    // NEEDSWORK GeometryParts!!!  This is the most key place.
     auto chN = item.second ? createManifoldFromGeometry(item.second) : nullptr;
 
     // Intersecting something with nothing results in nothing

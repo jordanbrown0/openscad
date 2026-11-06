@@ -17,6 +17,7 @@
 #include "core/LinearExtrudeNode.h"
 #include "core/ModuleInstantiation.h"
 #include "core/OffsetNode.h"
+#include "core/PartNode.h"
 #include "core/ProjectionNode.h"
 #include "core/RenderNode.h"
 #include "core/RoofNode.h"
@@ -83,6 +84,7 @@ std::shared_ptr<const Geometry> GeometryEvaluator::evaluateGeometry(const Abstra
     // If not found in any caches, we need to evaluate the geometry
     // traverse() will set this->root to a geometry, which can be any geometry
     // (including GeometryList if the lazyunions feature is enabled)
+    // and including GeometryParts.
     this->traverse(node);
     result = this->root;
 
@@ -94,6 +96,7 @@ std::shared_ptr<const Geometry> GeometryEvaluator::evaluateGeometry(const Abstra
   // Note: we don't store the converted into the cache as it would conflict with subsequent calls where
   // allownef is true.
   if (!allownef) {
+    // NEEDSWORK this probably needs GeometryParts work.
     if (auto ps = PolySetUtils::getGeometryAsPolySet(result)) {
       assert(ps->getDimension() == 3);
       // We cannot render concave polygons, so tessellate any PolySets
@@ -503,6 +506,7 @@ Response GeometryEvaluator::visit(State& state, const ColorNode& node)
  */
 Response GeometryEvaluator::visit(State& state, const AbstractNode& node)
 {
+  printf("GeometryEvaluator::visit(AbstractNode)\n"); fflush(stdout);
   if (state.isPrefix()) {
     if (isSmartCached(node)) return Response::PruneTraversal;
     state.setPreferNef(true);  // Improve quality of CSG by avoiding conversion loss
@@ -549,9 +553,16 @@ Response GeometryEvaluator::visit(State& state, const ListNode& node)
 
 /*!
  */
+Response GeometryEvaluator::visit(State& state, const PartNode& node)
+{
+  printf("GeometryEvaluator::visit(PartNode)\n"); fflush(stdout);
+  return visit(state, static_cast<const GroupNode&>(node));
+}
+
 Response GeometryEvaluator::visit(State& state, const GroupNode& node)
 {
-  return visit(state, (const AbstractNode&)node);
+  printf("GeometryEvaluator::visit(GroupNode)\n"); fflush(stdout);
+  return visit(state, static_cast<const AbstractNode&>(node));
 }
 
 Response GeometryEvaluator::lazyEvaluateRootNode(State& state, const AbstractNode& node)
@@ -569,6 +580,9 @@ Response GeometryEvaluator::lazyEvaluateRootNode(State& state, const AbstractNod
     std::shared_ptr<const Geometry> geom;
 
     unsigned int dim = 0;
+    // GeometryParts:  we don't need this function, because a RootNode is the same as
+    // a GroupNode.  Well, pretty close.  Maybe not, in that there's an implied part("").
+    // But maybe that just means that RootNode should derive from PartNode.
     GeometryList::Geometries geometries;
     for (const auto& item : this->visitedchildren[node.index()]) {
       if (!isValidDim(item, dim)) break;
@@ -849,6 +863,7 @@ std::shared_ptr<const Geometry> GeometryEvaluator::projectionCut(const Projectio
   if (newgeom) {
 #ifdef ENABLE_MANIFOLD
     if (RenderSettings::inst()->backend3D == RenderBackend3D::ManifoldBackend) {
+      // NEEDSWORK GeometryParts:  arguably projection of parts should yield parts.
       auto manifold = ManifoldUtils::createManifoldFromGeometry(newgeom);
       if (manifold != nullptr) {
         auto poly2d = manifold->slice();
@@ -877,6 +892,7 @@ std::shared_ptr<const Geometry> GeometryEvaluator::projectionNoCut(const Project
     const std::shared_ptr<const Geometry> newgeom =
       applyToChildren3D(node, OpenSCADOperator::UNION).constptr();
     if (newgeom) {
+      // NEEDSWORK GeometryParts:  arguably projection of parts should yield parts.
       auto manifold = ManifoldUtils::createManifoldFromGeometry(newgeom);
       if (manifold != nullptr) {
         auto poly2d = manifold->project();
@@ -896,6 +912,7 @@ std::shared_ptr<const Geometry> GeometryEvaluator::projectionNoCut(const Project
     // Clipper doesn't handle meshes very well.
     // It's better in V6 but not quite there. FIXME: stand-alone example.
     // project chgeom -> polygon2d
+    // NEEDSWORK GeometryParts:  arguably, projection of parts should yield parts.
     if (auto chPS = PolySetUtils::getGeometryAsPolySet(chgeom)) {
       if (auto poly = PolySetUtils::project(*chPS)) {
         tmp_geom.push_back(std::shared_ptr(std::move(poly)));

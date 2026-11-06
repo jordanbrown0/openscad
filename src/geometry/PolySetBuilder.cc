@@ -97,6 +97,9 @@ int PolySetBuilder::vertexIndex(const Vector3d& pt)
 
 void PolySetBuilder::appendGeometry(const std::shared_ptr<const Geometry>& geom)
 {
+  // NEEDSWORK GeometryParts:  This needs to union all of the parts in a GeometryParts.
+  // NOTE:  not just concatenate, as is done with GeometryList.
+  // Or maybe getGeometryAsPolySet should do it.
   if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
     for (const Geometry::GeometryItem& item : geomlist->getChildren()) {
       appendGeometry(item.second);

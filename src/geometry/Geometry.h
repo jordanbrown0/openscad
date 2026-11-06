@@ -3,6 +3,8 @@
 #include <cassert>
 #include <cstddef>
 #include <list>
+#include <map>
+#include <optional>
 #include <memory>
 #include <string>
 #include <utility>
@@ -12,6 +14,7 @@
 class AbstractNode;
 class CGALNefGeometry;
 class GeometryList;
+class GeometryParts;
 class GeometryVisitor;
 class Polygon2d;
 class PolySet;
@@ -62,6 +65,7 @@ class GeometryVisitor
 {
 public:
   virtual void visit(const GeometryList& node) = 0;
+  virtual void visit(const GeometryParts& node) = 0;
   virtual void visit(const PolySet& node) = 0;
   virtual void visit(const Polygon2d& node) = 0;
 #ifdef ENABLE_CGAL
@@ -103,4 +107,31 @@ public:
   [[nodiscard]] const Geometries& getChildren() const { return this->children; }
 
   [[nodiscard]] Geometries flatten() const;
+};
+
+class GeometryParts : public Geometry
+{
+public:
+  using GeometryMap = std::unordered_map<std::optional<std::string>, std::shared_ptr<const Geometry>>;
+
+  VISITABLE_GEOMETRY();
+  GeometryMap children;
+
+  GeometryParts();
+  // NEEDSWORK I'm not sure what the right replace is for this.
+  //GeometryParts(Geometry::Geometries geometries);
+
+  [[nodiscard]] size_t memsize() const override;
+  [[nodiscard]] BoundingBox getBoundingBox() const override;
+  [[nodiscard]] std::string dump() const override;
+  [[nodiscard]] unsigned int getDimension() const override;
+  [[nodiscard]] bool isEmpty() const override;
+  [[nodiscard]] std::unique_ptr<Geometry> copy() const override;
+  [[nodiscard]] size_t numFacets() const override
+  {
+    assert(false && "not implemented");
+    return 0;
+  }
+
+  [[nodiscard]] const GeometryMap& getChildren() const { return this->children; }
 };

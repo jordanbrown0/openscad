@@ -495,6 +495,7 @@ int do_export(const CommandLine& cmd, const RenderVariables& render_variables, F
       root_geom = geomevaluator.evaluateGeometry(*tree.root(), allownef);
       if (!root_geom) root_geom = std::make_shared<PolySet>(3);
       if (cmd.viewOptions.renderer == RenderType::BACKEND_SPECIFIC && root_geom->getDimension() == 3) {
+        // NEEDSWORK GeometryParts
         if (auto geomlist = std::dynamic_pointer_cast<const GeometryList>(root_geom)) {
           auto flatlist = geomlist->flatten();
           for (auto& child : flatlist) {
@@ -502,6 +503,7 @@ int do_export(const CommandLine& cmd, const RenderVariables& render_variables, F
               child.second = GeometryUtils::getBackendSpecificGeometry(child.second);
             }
           }
+          // NEEDSWORK GeometryParts
           root_geom = std::make_shared<GeometryList>(flatlist);
         } else {
           root_geom = GeometryUtils::getBackendSpecificGeometry(root_geom);

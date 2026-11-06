@@ -238,6 +238,7 @@ uint64_t append_stl(const ManifoldGeometry& mani, std::ostream& output, bool bin
 uint64_t append_stl(const std::shared_ptr<const Geometry>& geom, std::ostream& output, bool binary)
 {
   uint64_t triangle_count = 0;
+  // NEEDSWORK GeometryParts:  generate multiple STLs, or union.  (Or just concatenate?)
   if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
     for (const Geometry::GeometryItem& item : geomlist->getChildren()) {
       triangle_count += append_stl(item.second, output, binary);

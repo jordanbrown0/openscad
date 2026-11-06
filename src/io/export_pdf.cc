@@ -181,7 +181,11 @@ void draw_geom(const Polygon2d& poly, cairo_t *cr)
 // Main entry:  draw geometry that consists of 2D polygons.  Walks the tree...
 void draw_geom(const std::shared_ptr<const Geometry>& geom, cairo_t *cr)
 {
-  if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
+  if (const auto geomlist = std::dynamic_pointer_cast<const GeometryParts>(geom)) {
+    for (const auto& item : geomlist->getChildren()) {
+      draw_geom(item.second, cr);
+    }
+  } else if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
     for (const auto& item : geomlist->getChildren()) {
       draw_geom(item.second, cr);
     }

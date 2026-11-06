@@ -330,7 +330,13 @@ bool append_nef(const CGALNefGeometry& root_N, ExportContext& ctx)
 
 static bool append_3mf(const std::shared_ptr<const Geometry>& geom, ExportContext& ctx)
 {
-  if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
+  if (const auto geomlist = std::dynamic_pointer_cast<const GeometryParts>(geom)) {
+    // NEEDSWORK GeometryParts:  names and whatnot
+    ctx.modelcount = geomlist->getChildren().size();
+    for (const auto& item : geomlist->getChildren()) {
+      if (!append_3mf(item.second, ctx)) return false;
+    }
+  } else if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
     ctx.modelcount = geomlist->getChildren().size();
     for (const auto& item : geomlist->getChildren()) {
       if (!append_3mf(item.second, ctx)) return false;

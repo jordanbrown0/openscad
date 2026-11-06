@@ -38,6 +38,7 @@ public:
 #endif
   Response visit(State& state, const ListNode& node) override;
   Response visit(State& state, const GroupNode& node) override;
+  Response visit(State& state, const PartNode& node) override;
   Response visit(State& state, const RootNode& node) override;
   Response visit(State& state, const LeafNode& node) override;
   Response visit(State& state, const TransformNode& node) override;

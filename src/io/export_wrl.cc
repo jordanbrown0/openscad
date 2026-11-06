@@ -37,6 +37,7 @@
 void export_wrl(const std::shared_ptr<const Geometry>& geom, std::ostream& output)
 {
   // FIXME: In lazy union mode, should we export multiple IndexedFaceSets?
+  // NEEDSWORK GeometryParts:  export as multiple parts?
   auto ps = PolySetUtils::getGeometryAsPolySet(geom);
   if (Feature::ExperimentalPredictibleOutput.is_enabled()) {
     ps = createSortedPolySet(*ps);

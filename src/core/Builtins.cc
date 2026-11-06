@@ -48,6 +48,7 @@ void Builtins::init(const std::string& name, BuiltinFunction *function,
 
 extern void register_builtin_functions();
 extern void register_builtin_group();
+extern void register_builtin_part();
 extern void register_builtin_csgops();
 extern void register_builtin_transform();
 extern void register_builtin_color();
@@ -78,6 +79,7 @@ void Builtins::initialize()
   register_builtin_functions();
   initialize_builtin_dxf_dim();
 
+  register_builtin_part();
   register_builtin_group();
   register_builtin_csgops();
   register_builtin_transform();

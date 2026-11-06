@@ -306,6 +306,7 @@ static void export_dxf(const Polygon2d& poly, std::ostream& output)
 
 void export_dxf(const std::shared_ptr<const Geometry>& geom, std::ostream& output)
 {
+  // NEEDSWORK GeometryParts
   if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
     for (const auto& item : geomlist->getChildren()) {
       export_dxf(item.second, output);

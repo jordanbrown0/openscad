@@ -74,6 +74,7 @@ static void append_svg(const Polygon2d& poly, std::ostream& output, const Export
 static void append_svg(const std::shared_ptr<const Geometry>& geom, std::ostream& output,
                        const ExportInfo& exportInfo)
 {
+  // NEEDSWORK GeometryParts:  export as multiple SVG objects?
   if (const auto geomlist = std::dynamic_pointer_cast<const GeometryList>(geom)) {
     for (const auto& item : geomlist->getChildren()) {
       append_svg(item.second, output, exportInfo);

@@ -46,6 +46,7 @@
 
 void export_off(const std::shared_ptr<const Geometry>& geom, std::ostream& output)
 {
+  // NEEDSWORK GeometryParts:  export multiple parts?
   auto ps = PolySetUtils::getGeometryAsPolySet(geom);
   if (Feature::ExperimentalPredictibleOutput.is_enabled()) {
     ps = createSortedPolySet(*ps);

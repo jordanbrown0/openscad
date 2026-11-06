@@ -81,6 +81,7 @@ private:
 struct LogVisitor : public StatisticVisitor {
   LogVisitor(const std::vector<std::string>& options) : StatisticVisitor(options) {}
   void visit(const GeometryList& node) override;
+  void visit(const GeometryParts& node) override;
   void visit(const PolySet& node) override;
   void visit(const Polygon2d& node) override;
 #ifdef ENABLE_CGAL
@@ -112,6 +113,7 @@ struct StreamVisitor : public StatisticVisitor {
     if (fstream.is_open()) fstream.close();
   }
   void visit(const GeometryList& node) override;
+  void visit(const GeometryParts& node) override;
   void visit(const PolySet& node) override;
   void visit(const Polygon2d& node) override;
 #ifdef ENABLE_CGAL
@@ -227,6 +229,12 @@ void LogVisitor::visit(const GeometryList& geomlist)
   LOG("   Objects:    %1$d", geomlist.getChildren().size());
 }
 
+void LogVisitor::visit(const GeometryParts& geomlist)
+{
+  LOG("Top level object is a multiple parts:");
+  LOG("   Parts:    %1$d", geomlist.getChildren().size());
+}
+
 void LogVisitor::visit(const Polygon2d& poly)
 {
   LOG("Top level object is a 2D object:");
@@ -337,6 +345,11 @@ void LogVisitor::finish()
 }
 
 void StreamVisitor::visit(const GeometryList& geomlist)
+{
+}
+
+// NEEDSWORK GeometryParts:  what is this used for?
+void StreamVisitor::visit(const GeometryParts& geomlist)
 {
 }
 
