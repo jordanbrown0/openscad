@@ -22,7 +22,7 @@ std::shared_ptr<ManifoldGeometry> createManifoldFromSurfaceMesh(const SurfaceMes
 template <typename SurfaceMesh>
 std::shared_ptr<SurfaceMesh> createSurfaceMeshFromManifold(const manifold::Manifold& mani);
 
-std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geometries& children,
+std::shared_ptr<GeometryParts> applyOperator3DManifold(const Geometry::Geometries& children,
                                                           OpenSCADOperator op);
 
 Polygon2d polygonsToPolygon2d(const manifold::Polygons& polygons);

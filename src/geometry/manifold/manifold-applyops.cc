@@ -26,7 +26,7 @@ Location getLocation(const std::shared_ptr<const AbstractNode>& node)
    Applies op to all children and returns the result.
    The child list should be guaranteed to contain non-NULL 3D or empty Geometry objects
  */
-std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geometries& children,
+std::shared_ptr<GeometryParts> applyOperator3DManifold(const Geometry::Geometries& children,
                                                           OpenSCADOperator op)
 {
   if (op == OpenSCADOperator::HULL) {
@@ -61,7 +61,9 @@ std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geomet
       if (item.first) item.first->progress_report();
     }
     if (pts.empty()) return nullptr;
-    return std::make_shared<ManifoldGeometry>(manifold::Manifold::Hull(pts));
+    auto result = std::make_shared<GeometryParts>();
+    result->add(std::nullopt, std::make_shared<ManifoldGeometry>(manifold::Manifold::Hull(pts)));
+    return result;
   }
 
   auto geom = std::make_shared<GeometryParts>();
@@ -90,9 +92,10 @@ std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geomet
 
     // Initialize geom with first expected geometric object
     if (!foundFirst) {
-      if (auto gp = dynamic_cast<const GeometryParts *>(&*chN)) {
+      if (auto gp = std::dynamic_pointer_cast<const GeometryParts>(chN)) {
         // First child is a GeometryParts; transcribe it.
-        for (auto childItem : gp->children) {
+        // NEEDSWORK:  can I just use a constructor to do this?
+        for (auto childItem : gp->getChildren()) {
           std::optional<std::string> key = childItem.first;
           std::shared_ptr<const Geometry> g = childItem.second;
           geom->add(key, g);
@@ -110,22 +113,68 @@ std::shared_ptr<ManifoldGeometry> applyOperator3DManifold(const Geometry::Geomet
     }
 
     // If the child isn't a GeometryParts, convert it into one.
-    // As above, probably we should ensure that the child will always be a GeometryParts
+    // NEEDSWORK As above, probably we should ensure that the child will always be a GeometryParts
     // so that we don't need conversion.
-    const GeometryParts *gpchild = dynamic_cast<const GeometryParts *>(&*chN);
-    auto gptemp = std::make_shared<GeometryParts>();
+    auto gpchild = std::dynamic_pointer_cast<const GeometryParts>(chN);
     if (!gpchild) {
-      auto mg = createManifoldFromGeometry(chN);
-      gptemp->add(std::nullopt, mg);
-      gpchild = &*gptemp;
+      auto gptemp = std::make_shared<GeometryParts>();
+      gptemp->add(std::nullopt, createManifoldFromGeometry(chN));
+      gpchild = gptemp;
     }
 
     //createManifoldFromGeometry(item.second) : nullptr;
     switch (op) {
-    case OpenSCADOperator::UNION:        *geom = *geom + *chN; break;
-    case OpenSCADOperator::INTERSECTION: *geom = *geom * *chN; break;
-    case OpenSCADOperator::DIFFERENCE:   *geom = *geom - *chN; break;
-    case OpenSCADOperator::MINKOWSKI:    *geom = geom->minkowski(*chN); break;
+    case OpenSCADOperator::UNION:
+      for (auto part : gpchild->getChildren()) {
+        auto partName = part.first;
+        auto partGeom = createManifoldFromGeometry(part.second);
+        auto existing = createManifoldFromGeometry(geom->get(partName));
+        if (existing) {
+          geom->replace(partName, *existing + *partGeom);
+        } else {
+          geom->add(partName, partGeom);
+        }
+      }
+      break;
+    case OpenSCADOperator::INTERSECTION:
+      // NEEDSWORK I'm not sure what "right" is, but I'm pretty sure this isn't even close to it.
+      for (auto part : gpchild->getChildren()) {
+        auto partName = part.first;
+        auto partGeom = createManifoldFromGeometry(part.second);
+        auto existing = createManifoldFromGeometry(geom->get(partName));
+        if (existing) {
+          geom->replace(partName, *existing * *partGeom);
+        } else {
+          geom->add(partName, partGeom);
+        }
+      }
+      break;
+    case OpenSCADOperator::DIFFERENCE:
+      // NEEDSWORK I'm not sure what "right" is, but I'm pretty sure this isn't even close to it.
+      for (auto part : gpchild->getChildren()) {
+        auto partName = part.first;
+        auto partGeom = createManifoldFromGeometry(part.second);
+        auto existing = createManifoldFromGeometry(geom->get(partName));
+        if (existing) {
+          geom->replace(partName, *existing - *partGeom);
+        } else {
+          geom->add(partName, partGeom);
+        }
+      }
+      break;
+    case OpenSCADOperator::MINKOWSKI:
+      // NEEDSWORK I'm not sure what "right" is, but I'm pretty sure this isn't even close to it.
+      for (auto part : gpchild->getChildren()) {
+        auto partName = part.first;
+        auto partGeom = createManifoldFromGeometry(part.second);
+        auto existing = createManifoldFromGeometry(geom->get(partName));
+        if (existing) {
+          geom->replace(partName, existing->minkowski(*partGeom));
+        } else {
+          geom->add(partName, partGeom);
+        }
+      }
+      break;
     default:                             LOG(message_group::Error, "Unsupported CGAL operator: %1$d", static_cast<int>(op));
     }
     if (item.first) item.first->progress_report();

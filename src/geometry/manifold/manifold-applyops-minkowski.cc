@@ -231,7 +231,9 @@ std::shared_ptr<const Geometry> applyMinkowski(const Geometry::Geometries& child
       PRINTDB("Minkowski: Union done: %f s", t.time());
       t.reset();
 
-      N->toOriginal();
+      // NEEDSWORK almost certainly wrong.
+      // I don't know what this does, but it tries to modify the original and that's No Darned Good.
+      // N->toOriginal();
       operands[0] = N;
     }
 

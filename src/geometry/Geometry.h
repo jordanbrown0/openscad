@@ -115,7 +115,6 @@ public:
   using GeometryMap = std::unordered_map<std::optional<std::string>, std::shared_ptr<const Geometry>>;
 
   VISITABLE_GEOMETRY();
-  GeometryMap children;
 
   GeometryParts();
   // NEEDSWORK I'm not sure what the right replacement is for this.
@@ -134,5 +133,12 @@ public:
   }
 
   [[nodiscard]] const GeometryMap& getChildren() const { return this->children; }
+  [[nodiscard]] bool contains(std::optional<std::string> key) const;
+  [[nodiscard]] std::shared_ptr<const Geometry> get(std::optional<std::string> key) const;
   void add(std::optional<std::string> key, std::shared_ptr<const Geometry> part);
+  void replace(std::optional<std::string> key, std::shared_ptr<const Geometry> part);
+  void replace(std::optional<std::string> key, const Geometry& part);
+
+private:
+  GeometryMap children;
 };
